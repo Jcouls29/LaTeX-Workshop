@@ -16,9 +16,9 @@ export class Cleaner {
         if (this.extension.manager.rootFile !== undefined) {
             this.extension.manager.findRoot()
         }
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
-        const globs = configuration.get('latex.clean.fileTypes') as string[]
-        let outdir = configuration.get('latex.outputDir') as string
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
+        const globs = configuration.get('zed.clean.fileTypes') as string[]
+        let outdir = configuration.get('zed.outputDir') as string
         if (!outdir.endsWith('/') && !outdir.endsWith('\\')) {
             outdir += path.sep
         }

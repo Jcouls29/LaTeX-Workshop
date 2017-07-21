@@ -18,7 +18,7 @@ import {Cleaner} from './cleaner'
 import {SectionNodeProvider} from './providers/outline'
 
 function lintRootFileIfEnabled(extension: Extension) {
-    const configuration = vscode.workspace.getConfiguration('latex-workshop')
+    const configuration = vscode.workspace.getConfiguration('zed-workshop')
     const linter = configuration.get('chktex.enabled') as boolean
     if (linter) {
         extension.linter.lintRootFile()
@@ -26,7 +26,7 @@ function lintRootFileIfEnabled(extension: Extension) {
 }
 
 function lintActiveFileIfEnabled(extension: Extension) {
-    const configuration = vscode.workspace.getConfiguration('latex-workshop')
+    const configuration = vscode.workspace.getConfiguration('zed-workshop')
     const linter = configuration.get('chktex.enabled') as boolean
     if (linter) {
         extension.linter.lintActiveFile()
@@ -34,7 +34,7 @@ function lintActiveFileIfEnabled(extension: Extension) {
 }
 
 function lintActiveFileIfEnabledAfterInterval(extension: Extension) {
-    const configuration = vscode.workspace.getConfiguration('latex-workshop')
+    const configuration = vscode.workspace.getConfiguration('zed-workshop')
     const linter = configuration.get('chktex.enabled') as boolean
     if (linter) {
         const interval = configuration.get('chktex.interval') as number
@@ -46,7 +46,7 @@ function lintActiveFileIfEnabledAfterInterval(extension: Extension) {
 }
 
 function obsoleteConfigCheck() {
-    const configuration = vscode.workspace.getConfiguration('latex-workshop')
+    const configuration = vscode.workspace.getConfiguration('zed-workshop')
     function renameConfig(originalConfig: string, newConfig: string) {
         if (!configuration.has(originalConfig)) {
             return
@@ -61,7 +61,7 @@ function obsoleteConfigCheck() {
             configuration.update(originalConfig, undefined, false)
         }
     }
-    renameConfig('latex.autoBuild.enabled', 'latex.autoBuild.onSave.enabled')
+    renameConfig('zed.autoBuild.enabled', 'zed.autoBuild.onSave.enabled')
     renameConfig('viewer.zoom', 'view.pdf.zoom')
     renameConfig('viewer.hand', 'view.pdf.hand')
     if (configuration.has('version')) {
@@ -76,13 +76,13 @@ function newVersionMessage(extensionPath: string, extension: Extension) {
             return
         }
         extension.packageInfo = JSON.parse(data.toString())
-        extension.logger.addLogMessage(`LaTeX Workshop version: ${extension.packageInfo.version}`)
+        extension.logger.addLogMessage(`Zed Workshop version: ${extension.packageInfo.version}`)
         if (fs.existsSync(`${extensionPath}${path.sep}VERSION`) &&
             fs.readFileSync(`${extensionPath}${path.sep}VERSION`).toString() === extension.packageInfo.version) {
             return
         }
         fs.writeFileSync(`${extensionPath}${path.sep}VERSION`, extension.packageInfo.version)
-        vscode.window.showInformationMessage(`LaTeX Workshop updated to version ${extension.packageInfo.version}.`,
+        vscode.window.showInformationMessage(`Zed Workshop updated to version ${extension.packageInfo.version}.`,
             'Change log', 'Star the project', 'Write review')
         .then(option => {
             switch (option) {
@@ -105,23 +105,23 @@ function newVersionMessage(extensionPath: string, extension: Extension) {
 export async function activate(context: vscode.ExtensionContext) {
     const extension = new Extension()
 
-    vscode.commands.registerCommand('latex-workshop.build', () => extension.commander.build())
-    vscode.commands.registerCommand('latex-workshop.view', () => extension.commander.view())
-    vscode.commands.registerCommand('latex-workshop.tab', () => extension.commander.tab())
-    vscode.commands.registerCommand('latex-workshop.synctex', () => extension.commander.synctex())
-    vscode.commands.registerCommand('latex-workshop.clean', () => extension.commander.clean())
-    vscode.commands.registerCommand('latex-workshop.actions', () => extension.commander.actions())
-    vscode.commands.registerCommand('latex-workshop.citation', () => extension.commander.citation())
-    vscode.commands.registerCommand('latex-workshop.log', () => extension.commander.log())
-    vscode.commands.registerCommand('latex-workshop.code-action', (d, r, c, m) => extension.codeActions.runCodeAction(d, r, c, m))
-    vscode.commands.registerCommand('latex-workshop.goto-section', (filePath, lineNumber) => extension.commander.gotoSection(filePath, lineNumber))
+    vscode.commands.registerCommand('zed-workshop.build', () => extension.commander.build())
+    vscode.commands.registerCommand('zed-workshop.view', () => extension.commander.view())
+    vscode.commands.registerCommand('zed-workshop.tab', () => extension.commander.tab())
+    vscode.commands.registerCommand('zed-workshop.synctex', () => extension.commander.synctex())
+    vscode.commands.registerCommand('zed-workshop.clean', () => extension.commander.clean())
+    vscode.commands.registerCommand('zed-workshop.actions', () => extension.commander.actions())
+    vscode.commands.registerCommand('zed-workshop.citation', () => extension.commander.citation())
+    vscode.commands.registerCommand('zed-workshop.log', () => extension.commander.log())
+    vscode.commands.registerCommand('zed-workshop.code-action', (d, r, c, m) => extension.codeActions.runCodeAction(d, r, c, m))
+    vscode.commands.registerCommand('zed-workshop.goto-section', (filePath, lineNumber) => extension.commander.gotoSection(filePath, lineNumber))
 
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((e: vscode.TextDocument) => {
         if (extension.manager.isTex(e.fileName)) {
             lintRootFileIfEnabled(extension)
         }
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
-        if (!configuration.get('latex.autoBuild.onSave.enabled') || extension.builder.disableBuildAfterSave) {
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
+        if (!configuration.get('zed.autoBuild.onSave.enabled') || extension.builder.disableBuildAfterSave) {
             return
         }
         if (extension.manager.isTex(e.fileName)) {
@@ -162,12 +162,12 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     }))
 
-    context.subscriptions.push(vscode.workspace.createFileSystemWatcher('**/*.tex', true, false, true).onDidChange((e: vscode.Uri) => {
+    context.subscriptions.push(vscode.workspace.createFileSystemWatcher('**/*.zed', true, false, true).onDidChange((e: vscode.Uri) => {
         if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.fileName === e.fsPath) {
             return
         }
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
-        if (!configuration.get('latex.autoBuild.onTexChange.enabled')) {
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
+        if (!configuration.get('zed.autoBuild.onTexChange.enabled')) {
             return
         }
         extension.logger.addLogMessage(`${e.fsPath} changed. Auto build project.`)
@@ -180,15 +180,15 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     }))
 
-    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('latex-workshop-pdf', new PDFProvider(extension)))
-    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('latex-workshop-log', extension.logProvider))
-    context.subscriptions.push(vscode.languages.registerCompletionItemProvider('latex', extension.completer, '\\', '{', ','))
-    context.subscriptions.push(vscode.languages.registerCodeActionsProvider('latex', extension.codeActions))
+    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('zed-workshop-pdf', new PDFProvider(extension)))
+    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('zed-workshop-log', extension.logProvider))
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider('z', extension.completer, '\\', '{', ','))
+    context.subscriptions.push(vscode.languages.registerCodeActionsProvider('z', extension.codeActions))
     extension.manager.findRoot()
 
     const sectionNodeProvider = new SectionNodeProvider(extension)
 
-    vscode.window.registerTreeDataProvider('latex-outline', sectionNodeProvider)
+    vscode.window.registerTreeDataProvider('zed-outline', sectionNodeProvider)
 
     lintRootFileIfEnabled(extension)
     obsoleteConfigCheck()
@@ -229,6 +229,6 @@ export class Extension {
         this.codeActions = new CodeActions(this)
 
         this.logProvider = new LogProvider(this)
-        this.logger.addLogMessage(`LaTeX Workshop initialized.`)
+        this.logger.addLogMessage(`Zed Workshop initialized.`)
     }
 }

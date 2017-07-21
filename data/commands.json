@@ -4,6 +4,31 @@
     "snippet":"begin{${1:env}}\n\t$2\n\\\\end{${1:env}}",
     "detail":"begin a new environment"
   },
+  "begin-schema":{
+	"command":"begin-schema",
+	"snippet":"begin{schema}{${1:name}}\n\t$2\n\\where\n\t$2\n\\\\end{schema}",
+	"detail":"begin a new schema"
+  },
+  "begin-axdef":{
+	"command":"begin-axdef",
+	"snippet":"begin{axdef}\n\t$2\n\\\\end{axdef}",
+	"detail":"begin a new axiom definition"
+  },
+  "begin-zed":{
+	"command":"begin-zed",
+	"snippet":"begin{zed}\n\t$2\n\\\\end{zed}",
+	"detail":"begin a z specification block"
+  },
+  "begin-gendef":{
+	"command":"begin-gendef",
+	"snippet":"begin{gendef}[${1:params}]\n\t$2\n\\\\end{gendef}",
+	"detail":"begin a generic definition"
+  },
+  "begin-syntax":{
+	"command":"begin-syntax",
+	"snippet":"begin{syntax}\n\t$2\n\\\\end{syntax}",
+	"detail":"begin a syntax definition"
+  },
   "title":{
     "command":"title",
     "snippet":"title{${1:text}}"
@@ -494,6 +519,291 @@
   "cdot":{
     "command":"cdot",
     "detail":"·"
+  },
+  "power":{
+	"command":"power",
+	"detail":"power set"
+  },
+  "cross":{
+	"command":"cross"
+  },
+  "in":{
+	"command":"in"
+  },
+  "mid":{
+	"command":"mid"
+  },
+  "spot":{
+	"command":"spot"
+  },
+  "defs":{
+	"command":"defs"
+  },
+  "lnot":{
+	"command":"lnot"
+  },
+  "land":{
+	"command":"land"
+  },
+  "lor":{
+	"command":"lor"
+  },
+  "implies":{
+	"command":"implies"
+  },
+  "iff":{
+	"command":"iff"
+  },
+  "forall":{
+	"command":"forall"
+  },
+  "exists":{
+	"command":"exists"
+  },
+  "exists_1":{
+	"command":"exists_1"
+  },
+  "hide":{
+	"command":"hide"
+  },
+  "project":{
+	"command":"project"
+  },
+  "pre":{
+	"command":"pre"
+  },
+  "semi":{
+	"command":"semi"
+  },
+  "_angle":{
+	"command":"langle",
+	"snippet":"langle ${1:formula} \\\\rangle"
+  },
+  "_bag":{
+	"command":"bag",
+	"snippet":"lbag ${1:formula} \\\\rbag"
+  },
+  "_data":{
+	"command":"data",
+	"snippet":"ldata ${1:formula} \\\\rdata"
+  },
+  "_img":{
+	"command":"img",
+	"snippet":"limg ${1:formula} \\\\rimg"
+  },
+  "empty":{
+	"command":"empty"
+  },
+  "bigcup":{
+	"command":"bigcup"
+  },
+  "bigcap":{
+	"command":"bigcap"
+  },
+  "dom":{
+	"command":"dom"
+  },
+  "ran":{
+	"command":"ran"
+  },
+  "nat":{
+	"command":"nat"
+  },
+  "num":{
+	"command":"num"
+  },
+  "nat_1":{
+	"command":"nat_1"
+  },
+  "dcat":{
+	"command":"dcat"
+  },
+  "mapsto":{
+	"command":"mapsto",
+	"snippet":"${1:left} \\\\mapsto ${2:right}"
+  },
+  "upto":{
+	"command":"upto",
+	"snippet":"${1:left} \\\\upto ${2:right}"
+  },
+  "setminus":{
+	"command":"setminus"
+  },
+  "cat":{
+	"command":"cat"
+  },
+  "uplus":{
+	"command":"uplus"
+  },
+  "div":{
+	"command":"div"
+  },
+  "mod":{
+	"command":"mod"
+  },
+  "comp":{
+	"command":"comp"
+  },
+  "circ":{
+	"command":"circ"
+  },
+  "filter":{
+	"command":"filter"
+  },
+  "oplus":{
+	"command":"oplus"
+  },
+  "dres":{
+	"command":"dres"
+  },
+  "rres":{
+	"command":"rres"
+  },
+  "ndres":{
+	"command":"ndres"
+  },
+  "nrres":{
+	"command":"nrres"
+  },
+  "inv":{
+	"command":"inv"
+  },
+  "plus":{
+	"command":"plus"
+  },
+  "star":{
+	"command":"star"
+  },
+  "bsup":{
+	"command":"bsup",
+	"snippet":"bsup n \\\\esup"
+  },
+  "neq":{
+	"command":"neq"
+  },
+  "notin":{
+	"command":"notin"
+  },
+  "subseteq":{
+	"command":"subseteq"
+  },
+  "subset":{
+	"command":"subset"
+  },
+  "leq":{
+	"command":"leq"
+  },
+  "geq":{
+	"command":"geq"
+  },
+  "partition":{
+	"command":"partition"
+  },
+  "inbag":{
+	"command":"inbag"
+  },
+  "disjoint":{
+	"command":"disjoint"
+  },
+  "rel":{
+	"command":"rel",
+	"snippet":"${1:left} \\\\rel ${2:right}"
+  },
+  "pfun":{
+	"command":"pfun",
+	"snippet":"${1:left} \\\\pfun ${2:right}"
+  },
+  "fun":{
+	"command":"fun",
+	"snippet":"${1:left} \\\\fun ${2:right}"
+  },
+  "pinj":{
+	"command":"pinj",
+	"snippet":"${1:left} \\\\pinj ${2:right}"
+  },
+  "inj":{
+	"command":"inj",
+	"snippet":"${1:left} \\\\inj ${2:right}"
+  },
+  "psurj":{
+	"command":"psurj",
+	"snippet":"${1:left} \\\\psurj ${2:right}"
+  },
+  "surj":{
+	"command":"surj",
+	"snippet":"${1:left} \\\\surj ${2:right}"
+  },
+  "bij":{
+	"command":"bij",
+	"snippet":"${1:left} \\\\bij ${2:right}"
+  },
+  "ffun":{
+	"command":"ffun",
+	"snippet":"${1:left} \\\\ffun ${2:right}"
+  },
+  "finj":{
+	"command":"finj",
+	"snippet":"${1:left} \\\\finj ${2:right}"
+  },
+  "power_1":{
+	"command":"power_1"
+  },
+  "id":{
+	"command":"id"
+  },
+  "finset":{
+	"command":"finset"
+  },
+  "finset_1":{
+	"command":"finset_1"
+  },
+  "seq":{
+	"command":"seq"
+  },
+  "seq_1":{
+	"command":"seq_1"
+  },
+  "iseq":{
+	"command":"iseq"
+  },
+  "bag":{
+	"command":"bag"
+  },
+  "derive":{
+	"command":"derive"
+  },
+  "also":{
+	"command":"also"
+  },
+  "zedindent":{
+	"command":"zedindent"
+  },
+  "zedleftsep":{
+	"command":"zedleftsep"
+  },
+  "zedtab":{
+	"command":"zedtab"
+  },
+  "zedbar":{
+	"command":"zedbar"
+  },
+  "zedskip":{
+	"command":"zedskip"
+  },
+  "where":{
+	"command":"where"
+  },
+  "t1":{
+	"command":"t1"
+  },
+  "t2":{
+	"command":"t2"
+  },
+  "t3":{
+	"command":"t3"
+  },
+  "t4":{
+	"command":"t4"
   },
   "hat":{
     "command":"hat",

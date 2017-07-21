@@ -4,7 +4,7 @@
 <dict>
 	<key>fileTypes</key>
 	<array>
-		<string>tex</string>
+		<string>zed</string>
 	</array>
 	<key>firstLineMatch</key>
 	<string>^\\documentclass(?!.*\{beamer\})</string>

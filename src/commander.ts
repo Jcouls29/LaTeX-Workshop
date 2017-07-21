@@ -22,7 +22,7 @@ export class Commander {
             this.extension.logger.addLogMessage(`Building root file: ${rootFile}`)
             this.extension.builder.build(this.extension.manager.rootFile)
         } else {
-            this.extension.logger.addLogMessage(`Cannot find LaTeX root file.`)
+            this.extension.logger.addLogMessage(`Cannot find Zed root file.`)
         }
     }
 
@@ -35,7 +35,7 @@ export class Commander {
         if (rootFile !== undefined) {
             this.extension.viewer.openViewer(rootFile)
         } else {
-            this.extension.logger.addLogMessage(`Cannot find LaTeX root PDF to view.`)
+            this.extension.logger.addLogMessage(`Cannot find Zed root PDF to view.`)
         }
     }
 
@@ -60,7 +60,7 @@ export class Commander {
         if (rootFile !== undefined) {
             this.extension.viewer.openTab(rootFile)
         } else {
-            this.extension.logger.addLogMessage(`Cannot find LaTeX root PDF to view.`)
+            this.extension.logger.addLogMessage(`Cannot find Zed root PDF to view.`)
         }
     }
 
@@ -94,26 +94,26 @@ export class Commander {
         this.extension.logger.displayFullStatus()
         if (!this.commandTitles) {
             const commands = this.extension.packageInfo.contributes.commands.filter(command => {
-                if (command.command === 'latex-workshop.actions') {
+                if (command.command === 'zed-workshop.actions') {
                     return false
                 }
                 return true
             })
             this.commandTitles = commands.map(command => command.title)
             this.commands = commands.map(command => command.command)
-            this.commandTitles.push('Open LaTeX Workshop change log')
+            this.commandTitles.push('Open Zed Workshop change log')
             this.commandTitles.push('Create an issue on Github')
             this.commandTitles.push('Star the project')
         }
         const items = JSON.parse(JSON.stringify(this.commandTitles))
         vscode.window.showQuickPick(items, {
-            placeHolder: 'Please Select LaTeX Workshop Actions'
+            placeHolder: 'Please Select Zed Workshop Actions'
         }).then(selected => {
             if (!selected) {
                 return
             }
             switch (selected) {
-                case 'Open LaTeX Workshop change log':
+                case 'Open Zed Workshop change log':
                     opn('https://github.com/James-Yu/LaTeX-Workshop/blob/master/CHANGELOG.md')
                     break
                 case 'Create an issue on Github':

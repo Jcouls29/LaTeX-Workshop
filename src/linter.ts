@@ -22,7 +22,7 @@ export class Linter {
         const filePath = vscode.window.activeTextEditor.document.fileName
         const content = vscode.window.activeTextEditor.document.getText()
 
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
         const command = configuration.get('chktex.path') as string
         const args = configuration.get('chktex.args.active') as string[]
         const requiredArgs = ['-I0', '-f%f:%l:%c:%d:%k:%n:%m\n']
@@ -46,7 +46,7 @@ export class Linter {
         this.extension.logger.addLogMessage(`Linter for root file started.`)
         const filePath = this.extension.manager.rootFile
 
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
         const command = configuration.get('chktex.path') as string
         const args = configuration.get('chktex.args.root') as string[]
         const requiredArgs = ['-f%f:%l:%c:%d:%k:%n:%m\n', '%DOC%'.replace('%DOC%', filePath)]

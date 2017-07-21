@@ -80,7 +80,7 @@ export class Viewer {
         }
         const pdfFile = this.extension.manager.tex2pdf(sourceFile)
         const client = this.clients[pdfFile]
-        const uri = vscode.Uri.file(pdfFile).with({scheme: 'latex-workshop-pdf'})
+        const uri = vscode.Uri.file(pdfFile).with({scheme: 'zed-workshop-pdf'})
         let column = vscode.ViewColumn.Two
         if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn === vscode.ViewColumn.Two) {
             column = vscode.ViewColumn.Three
@@ -132,7 +132,7 @@ export class Viewer {
                     if (client.position !== undefined) {
                         client.ws.send(JSON.stringify(client.position))
                     } else {
-                        const configuration = vscode.workspace.getConfiguration('latex-workshop')
+                        const configuration = vscode.workspace.getConfiguration('zed-workshop')
                         client.ws.send(JSON.stringify({
                             type: "params",
                             scale: configuration.get('viewer.zoom'),

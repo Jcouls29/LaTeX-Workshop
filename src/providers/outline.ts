@@ -16,7 +16,7 @@ export class SectionNodeProvider implements vscode.TreeDataProvider<Section> {
     private ds: Section[] = []
 
     constructor(private extension: Extension) {
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
         this.hierarchy = configuration.get('view.outline.sections') as string[]
         this.hierarchy.forEach((section, index) => {
             section.split('|').forEach(sec => {
@@ -141,10 +141,10 @@ export class SectionNodeProvider implements vscode.TreeDataProvider<Section> {
                 let inputFilePath = path.resolve(path.join(this.extension.manager.rootDir, result[2]))
 
                 if (path.extname(inputFilePath) === '') {
-                    inputFilePath += '.tex'
+                    inputFilePath += '.zed'
                 }
-                if (!fs.existsSync(inputFilePath) && fs.existsSync(inputFilePath + '.tex')) {
-                    inputFilePath += '.tex'
+                if (!fs.existsSync(inputFilePath) && fs.existsSync(inputFilePath + '.zed')) {
+                    inputFilePath += '.zed'
                 }
                 if (fs.existsSync(inputFilePath) === false) {
                     this.extension.logger.addLogMessage(`Could not resolve included file ${inputFilePath}`)
@@ -164,7 +164,7 @@ export class SectionNodeProvider implements vscode.TreeDataProvider<Section> {
         const treeItem: vscode.TreeItem = new vscode.TreeItem(element.label, hasChildren ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None)
 
         treeItem.command = {
-            command: 'latex-workshop.goto-section',
+            command: 'zed-workshop.goto-section',
             title: '',
             arguments: [element.fileName, element.lineNumber]
         }

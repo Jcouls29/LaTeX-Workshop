@@ -23,13 +23,13 @@ export class Manager {
     }
 
     tex2pdf(texPath: string) {
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
-        const outputDir = configuration.get('latex.outputDir') as string
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
+        const outputDir = configuration.get('zed.outputDir') as string
         return path.resolve(path.dirname(texPath), outputDir, path.basename(`${texPath.substr(0, texPath.lastIndexOf('.'))}.pdf`))
     }
 
     isTex(filePath: string) {
-        return path.extname(filePath) === '.tex'
+        return path.extname(filePath) === '.zed'
     }
 
     findRoot() : string | undefined {
@@ -54,7 +54,7 @@ export class Manager {
         if (!vscode.window.activeTextEditor) {
             return undefined
         }
-        const regex = /(?:%\s*!\s*T[Ee]X\sroot\s*=\s*([^\s]*\.tex)$)/m
+        const regex = /(?:%\s*!\s*T[Ee]X\sroot\s*=\s*([^\s]*\.zed)$)/m
         const content = vscode.window.activeTextEditor.document.getText()
 
         const result = content.match(regex)
@@ -95,7 +95,7 @@ export class Manager {
         try {
             const files = fs.readdirSync(vscode.workspace.rootPath)
             for (let file of files) {
-                if (path.extname(file) !== '.tex') {
+                if (path.extname(file) !== '.zed') {
                     continue
                 }
                 file = path.join(vscode.workspace.rootPath, file)
@@ -141,12 +141,6 @@ export class Manager {
                 }
             })
             this.findDependentFiles(this.rootFile)
-            const configuration = vscode.workspace.getConfiguration('latex-workshop')
-            const additionalBib = configuration.get('latex.additionalBib') as string[]
-            for (const bib of additionalBib) {
-                this.extension.logger.addLogMessage(`Try to watch global bibliography file ${bib}.`)
-                this.addBibToWatcher(bib)
-            }
         }
     }
 
@@ -164,10 +158,10 @@ export class Manager {
             const inputFile = result[1]
             let inputFilePath = path.resolve(path.join(this.rootDir, inputFile))
             if (path.extname(inputFilePath) === '') {
-                inputFilePath += '.tex'
+                inputFilePath += '.zed'
             }
-            if (!fs.existsSync(inputFilePath) && fs.existsSync(inputFilePath + '.tex')) {
-                inputFilePath += '.tex'
+            if (!fs.existsSync(inputFilePath) && fs.existsSync(inputFilePath + '.zed')) {
+                inputFilePath += '.zed'
             }
             if (fs.existsSync(inputFilePath)) {
                 this.texFileTree[filePath].add(inputFilePath)
@@ -180,61 +174,7 @@ export class Manager {
             }
         }
 
-        const bibReg = /(?:\\(?:bibliography|addbibresource)(?:\[[^\[\]\{\}]*\])?){(.+?)}/g
-        while (true) {
-            const result = bibReg.exec(content)
-            if (!result) {
-                break
-            }
-            const bibs = result[1].split(',').map((bib) => {
-                return bib.trim()
-            })
-            for (const bib of bibs) {
-                this.addBibToWatcher(bib)
-            }
-        }
-
         this.extension.completer.command.getCommandsTeX(filePath)
         this.extension.completer.reference.getReferencesTeX(filePath)
-    }
-
-    addBibToWatcher(bib: string) {
-        let bibPath
-        if (path.isAbsolute(bib)) {
-            bibPath = bib
-        } else {
-            bibPath = path.resolve(path.join(this.rootDir, bib))
-        }
-        if (path.extname(bibPath) === '') {
-            bibPath += '.bib'
-        }
-        if (!fs.existsSync(bibPath) && fs.existsSync(bibPath + '.bib')) {
-            bibPath += '.bib'
-        }
-        if (fs.existsSync(bibPath)) {
-            this.extension.logger.addLogMessage(`Found .bib file ${bibPath}`)
-            if (this.bibWatcher === undefined) {
-                this.extension.logger.addLogMessage(`Creating file watcher for .bib files.`)
-                this.bibWatcher = chokidar.watch(bibPath)
-                this.bibWatcher.on('change', (path: string) => {
-                    this.extension.logger.addLogMessage(`Bib file watcher - responding to change in ${path}`)
-                    this.extension.completer.citation.parseBibFile(path)
-                })
-                this.bibWatcher.on('unlink', (path: string) => {
-                    this.extension.logger.addLogMessage(`Bib file watcher: ${path} deleted.`)
-                    this.extension.completer.citation.forgetParsedBibItems(path)
-                    this.bibWatcher.unwatch(path)
-                    this.watched.splice(this.watched.indexOf(path), 1)
-                })
-                this.extension.completer.citation.parseBibFile(bibPath)
-            } else if (this.watched.indexOf(bibPath) < 0) {
-                this.extension.logger.addLogMessage(`Adding .bib file ${bibPath} to bib file watcher.`)
-                this.bibWatcher.add(bibPath)
-                this.watched.push(bibPath)
-                this.extension.completer.citation.parseBibFile(bibPath)
-            } else {
-                this.extension.logger.addLogMessage(`.bib file ${bibPath} is already being watched.`)
-            }
-        }
     }
 }

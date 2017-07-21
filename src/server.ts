@@ -30,7 +30,7 @@ export class Server {
             ws.on("message", (msg) => this.extension.viewer.handler(ws, msg))
             ws.on("close", () => this.extension.viewer.handler(ws, '{"type": "close"}'))
         })
-        this.extension.logger.addLogMessage(`Creating LaTeX Workshop http and websocket server.`)
+        this.extension.logger.addLogMessage(`Creating Zed Workshop http and websocket server.`)
     }
 
     handler(request: http.IncomingMessage, response: http.ServerResponse) {

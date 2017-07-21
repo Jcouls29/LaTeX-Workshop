@@ -1,10 +1,10 @@
 {
-  "name": "latex-workshop",
-  "displayName": "LaTeX Workshop",
-  "description": "Boost LaTeX typesetting efficiency with preview, compile, autocomplete, colorize, and more.",
+  "name": "zed-workshop",
+  "displayName": "Z-Notation Workshop",
+  "description": "Boost Z-Notation typesetting efficiency with preview, compile, autocomplete, colorize, and more.",
   "icon": "icon.png",
-  "version": "2.10.2",
-  "publisher": "James-Yu",
+  "version": "1.0.0",
+  "publisher": "SparcPoint",
   "license": "MIT",
   "homepage": "https://github.com/James-Yu/LaTeX-Workshop",
   "repository": {
@@ -23,60 +23,26 @@
     "tex",
     "compile",
     "preview",
-    "hint"
+    "hint",
+    "z",
+    "z-notation",
+    "specification",
+    "z-specification"
   ],
   "activationEvents": [
-    "onLanguage:latex"
+    "onLanguage:z"
   ],
   "main": "./out/src/main",
   "contributes": {
     "languages": [
       {
-        "id": "tex",
+        "id": "z",
         "aliases": [
-          "TeX",
-          "tex"
+          "zed",
+          "Zed"
         ],
         "extensions": [
-          ".sty",
-          ".cls",
-          ".bbx",
-          ".cbx"
-        ],
-        "configuration": "./syntax/syntax.json"
-      },
-      {
-        "id": "latex",
-        "aliases": [
-          "LaTeX",
-          "latex"
-        ],
-        "extensions": [
-          ".tex"
-        ],
-        "configuration": "./syntax/syntax.json"
-      },
-      {
-        "id": "bibtex",
-        "aliases": [
-          "BibTeX",
-          "bibtex"
-        ],
-        "extensions": [
-          ".bib"
-        ]
-      },
-      {
-        "id": "latex-beamer",
-        "aliases": [
-          "LaTeX Beamer"
-        ],
-        "configuration": "./syntax/syntax.json"
-      },
-      {
-        "id": "latex-memoir",
-        "aliases": [
-          "LaTeX Memoir"
+          ".zed"
         ],
         "configuration": "./syntax/syntax.json"
       },
@@ -92,109 +58,84 @@
     ],
     "grammars": [
       {
-        "language": "tex",
-        "scopeName": "text.tex",
-        "path": "./syntax/TeX.plist"
-      },
-      {
-        "language": "latex",
-        "scopeName": "text.tex.latex",
+        "language": "z",
+        "scopeName": "text.z",
         "path": "./syntax/LaTeX.plist"
-      },
-      {
-        "language": "bibtex",
-        "scopeName": "text.bibtex",
-        "path": "./syntax/Bibtex.plist"
-      },
-      {
-        "language": "latex-beamer",
-        "scopeName": "text.tex.latex.beamer",
-        "path": "./syntax/LaTeX Beamer.plist"
-      },
-      {
-        "language": "latex-memoir",
-        "scopeName": "text.tex.latex.memoir",
-        "path": "./syntax/LaTeX Memoir.plist"
-      },
-      {
-        "language": "latex-log",
-        "scopeName": "text.log.latex",
-        "path": "./syntax/LaTeX Log.plist"
       }
     ],
     "commands": [
       {
-        "command": "latex-workshop.build",
-        "title": "Build LaTeX project",
-        "category": "LaTeX Workshop"
+        "command": "zed-workshop.build",
+        "title": "Build Zed project",
+        "category": "Zed Workshop"
       },
       {
-        "command": "latex-workshop.view",
+        "command": "zed-workshop.view",
         "title": "View PDF file in web page",
-        "category": "LaTeX Workshop"
+        "category": "Zed Workshop"
       },
       {
-        "command": "latex-workshop.tab",
+        "command": "zed-workshop.tab",
         "title": "View PDF file in new tab",
-        "category": "LaTeX Workshop"
+        "category": "Zed Workshop"
       },
       {
-        "command": "latex-workshop.synctex",
+        "command": "zed-workshop.synctex",
         "title": "SyncTeX from cursor",
-        "category": "LaTeX Workshop"
+        "category": "Zed Workshop"
       },
       {
-        "command": "latex-workshop.clean",
+        "command": "zed-workshop.clean",
         "title": "Clean up auxiliary files",
-        "category": "LaTeX Workshop"
+        "category": "Zed Workshop"
       },
       {
-        "command": "latex-workshop.citation",
+        "command": "zed-workshop.citation",
         "title": "Open citation browser",
-        "category": "LaTeX Workshop"
+        "category": "Zed Workshop"
       },
       {
-        "command": "latex-workshop.log",
+        "command": "zed-workshop.log",
         "title": "Show LaTeX log",
-        "category": "LaTeX Workshop"
+        "category": "Zed Workshop"
       },
       {
-        "command": "latex-workshop.actions",
-        "title": "LaTeX Workshop: All actions"
+        "command": "ze-workshop.actions",
+        "title": "Zed Workshop: All actions"
       }
     ],
     "keybindings": [
       {
-        "command": "latex-workshop.build",
+        "command": "zed-workshop.build",
         "key": "ctrl+alt+b",
         "when": "editorFocus && !replaceActive && !searchViewletVisible && !findWidgetVisible"
       },
       {
-        "command": "latex-workshop.view",
+        "command": "zed-workshop.view",
         "key": "ctrl+alt+v",
         "when": "editorFocus && !replaceActive && !searchViewletVisible && !findWidgetVisible"
       },
       {
-        "command": "latex-workshop.tab",
+        "command": "zed-workshop.tab",
         "key": "ctrl+alt+t",
         "when": "editorFocus && !replaceActive && !searchViewletVisible && !findWidgetVisible"
       },
       {
-        "command": "latex-workshop.synctex",
+        "command": "zed-workshop.synctex",
         "key": "ctrl+alt+s",
         "when": "editorFocus && !replaceActive && !searchViewletVisible && !findWidgetVisible"
       },
       {
-        "command": "latex-workshop.actions",
+        "command": "zed-workshop.actions",
         "key": "ctrl+alt+l",
         "when": "editorFocus && !replaceActive && !searchViewletVisible && !findWidgetVisible"
       }
     ],
     "configuration": {
       "type": "object",
-      "title": "LaTeX Workshop configuration",
+      "title": "Zed Workshop configuration",
       "properties": {
-        "latex-workshop.latex.toolchain": {
+        "zed-workshop.zed.toolchain": {
           "type": "array",
           "default": [
             {
@@ -210,32 +151,27 @@
           ],
           "description": "LaTeX toolchain to build project.\nThis property defines the sequence of commands LaTeX Workshop will execute to build the LaTeX project. By default it tries latexmk to compile to PDF.\nPlaceholder %DOC% is used to represent the root LaTeX file name (without '.tex' extension), and will be replaced when executing.\n For a detailed explanation on how to customize your toolchain, please visit https://github.com/James-Yu/LaTeX-Workshop#toolchain."
         },
-        "latex-workshop.latex.outputDir": {
+        "zed-workshop.zed.outputDir": {
           "type": "string",
           "default": "./",
           "description": "The directory where output files (e.g., PDF and SyncTeX files) are located.\nBoth relative and absolute pathes are supported. Relative path start from the root file location, so be ware if it is located in sub-directory."
         },
-        "latex-workshop.latex.additionalBib": {
-          "type": "array",
-          "default": [],
-          "description": "Addition bibliography files to watch.\nBoth relative and absolute paths are supported, but absolute ones are suggested. Relative path start from the root file location, so be ware if it is located in sub-directory."
-        },
-        "latex-workshop.latex.autoBuild.onSave.enabled": {
+        "zed-workshop.zed.autoBuild.onSave.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Build LaTeX after saving LaTeX source file.\nThis property defines whether LaTeX Workshop will execute the LaTeX toolchain command(s) to build the project after new LaTeX contents are saved."
+          "description": "Build LaTeX after saving Zed source file.\nThis property defines whether LaTeX Workshop will execute the LaTeX toolchain command(s) to build the project after new LaTeX contents are saved."
         },
-        "latex-workshop.latex.autoBuild.onTexChange.enabled": {
+        "zed-workshop.zed.autoBuild.onTexChange.enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Build LaTeX after a LaTeX source file has changed in the workspace.\nThis property defines whether LaTeX Workshop will execute the LaTeX toolchain command(s) to build the project after any LaTeX file in the workspace is saved on the disk which is not open in the active editor window."
+          "description": "Build LaTeX after a Zed source file has changed in the workspace.\nThis property defines whether LaTeX Workshop will execute the LaTeX toolchain command(s) to build the project after any LaTeX file in the workspace is saved on the disk which is not open in the active editor window."
         },
-        "latex-workshop.latex.clean.enabled": {
+        "zed-workshop.zed.clean.enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Delete LaTeX auxillary files after building project.\nThis property defines whether LaTeX Workshop will clean up all unnecessary files after building the project."
+          "description": "Delete Zed auxillary files after building project.\nThis property defines whether LaTeX Workshop will clean up all unnecessary files after building the project."
         },
-        "latex-workshop.latex.clean.fileTypes": {
+        "zed-workshop.zed.clean.fileTypes": {
           "type": "array",
           "default": [
             "*.aux",
@@ -260,7 +196,7 @@
           ],
           "description": "Files to clean.\nThis property must be an array of strings. File globs such as *.removeme, something?.aux can be used."
         },
-        "latex-workshop.view.outline.sections": {
+        "zed-workshop.view.outline.sections": {
           "type": "array",
           "default": [
             "chapter",
@@ -270,32 +206,32 @@
           ],
           "description": "The section names of LaTeX outline hierarchy.\nThis property is an array of case-sensitive strings in the order of document structure hierarchy. For multiple tags in the same level, seperate the tags with `|` as delimiters, e.g., `section|alternative`."
         },
-        "latex-workshop.view.pdf.zoom": {
+        "zed-workshop.view.pdf.zoom": {
           "type": "string",
           "default": "auto",
           "description": "The default zoom level of the PDF viewer.\nThis default value will be passed to the viewer upon opening. Possible values are `auto`, `page-actual`, `page-fit`, `page-width`, and one-based scale values (e.g., 0.5 for 50%, 2.0 for 200%)."
         },
-        "latex-workshop.view.pdf.hand": {
+        "zed-workshop.view.pdf.hand": {
           "type": "boolean",
           "default": false,
           "description": "Define if the hand tool is enabled by default in the PDF viewer."
         },
-        "latex-workshop.synctex.path": {
+        "zed-workshop.synctex.path": {
           "type": "string",
           "default": "synctex",
           "description": "Define the location of SyncTeX executive file.\nAdditional arguments, e.g., synctex modes and position of click, will be appended to this command."
         },
-        "latex-workshop.chktex.enabled": {
+        "zed-workshop.chktex.enabled": {
           "type": "boolean",
           "default": false,
           "description": "Enable linting LaTeX with ChkTeX.\nThe active document will be linted when no document changes for a defined period of time.\nThe full project will be linted from the root on file save."
         },
-        "latex-workshop.chktex.path": {
+        "zed-workshop.chktex.path": {
           "type": "string",
           "default": "chktex",
           "description": "Define the location of ChkTeX executive file.\nThis command will be joint with `latex-workshop.linter_arguments_*` and required arguments to form a complete command of ChkTeX."
         },
-        "latex-workshop.chktex.args.active": {
+        "zed-workshop.chktex.args.active": {
           "type": "array",
           "default": [
             "-wall",
@@ -306,7 +242,7 @@
           ],
           "description": "Linter arguments to check LaTeX syntax of the current file state in real time with ChkTeX.\nArguments must be in separate strings in the array. Additional arguments, i.e., `-I0 -f%f:%l:%c:%d:%k:%n:%m\\n` will be appended when constructing the command. Current file contents will be piped to the command through stdin."
         },
-        "latex-workshop.chktex.args.root": {
+        "zed-workshop.chktex.args.root": {
           "type": "array",
           "default": [
             "-wall",
@@ -317,12 +253,12 @@
           ],
           "description": "Linter arguments to check LaTeX syntax of the entire project from the root file with ChkTeX.\nArguments must be in separate strings in the array. Additional arguments, i.e., `-f%f:%l:%c:%d:%k:%n:%m\\n %DOC%` will be appended when constructing the command."
         },
-        "latex-workshop.chktex.interval": {
+        "zed-workshop.chktex.interval": {
           "type": "number",
           "default": 300,
           "description": "Defines the time interval in milliseconds between invoking LaTeX linter on the active file."
         },
-        "latex-workshop.intellisense.citation.type": {
+        "zed-workshop.intellisense.citation.type": {
           "type": "string",
           "enum": [
             "inline",
@@ -331,7 +267,7 @@
           "default": "inline",
           "description": "Defines which type of hint to show when intellisense provides citation suggestions."
         },
-        "latex-workshop.intellisense.citation.label": {
+        "zed-workshop.intellisense.citation.label": {
           "type": "string",
           "enum": [
             "bibtex key",
@@ -341,7 +277,7 @@
           "default": "bibtex key",
           "description": "Defines what to show as suggestion labels when intellisense provides citation suggestions."
         },
-        "latex-workshop.debug.showLog": {
+        "zed-workshop.debug.showLog": {
           "type": "boolean",
           "default": true,
           "description": "Display LaTeX Workshop debug log in output panel.\nThis property defines whether LaTeX Workshop will output its debug log to the log panel."
@@ -351,18 +287,18 @@
     "menus": {
       "editor/context": [
         {
-          "when": "resourceLangId == latex",
-          "command": "latex-workshop.build",
+          "when": "resourceLangId == z",
+          "command": "zed-workshop.build",
           "group": "navigation@100"
         },
         {
-          "when": "resourceLangId == latex",
-          "command": "latex-workshop.synctex",
+          "when": "resourceLangId == z",
+          "command": "zed-workshop.synctex",
           "group": "navigation@101"
         },
         {
-          "when": "resourceLangId == latex",
-          "command": "latex-workshop.actions",
+          "when": "resourceLangId == z",
+          "command": "zed-workshop.actions",
           "group": "navigation@102"
         }
       ]
@@ -370,9 +306,9 @@
     "views": {
       "explorer": [
         {
-          "id": "latex-outline",
-          "name": "LaTeX Outline",
-          "when": "resourceLangId == latex"
+          "id": "zed-outline",
+          "name": "Zed Outline",
+          "when": "resourceLangId == z"
         }
       ]
     }

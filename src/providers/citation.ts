@@ -35,7 +35,7 @@ export class Citation {
             this.citationInBib[bibPath].forEach(item => items.push(item))
         })
 
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
         this.suggestions = items.map(item => {
             const citation = new vscode.CompletionItem(item.key, vscode.CompletionItemKind.Reference)
             citation.detail = item.title

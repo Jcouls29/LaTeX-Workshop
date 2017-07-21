@@ -74,7 +74,7 @@ export class CodeActions {
             if (label !== undefined) {
                 actions.push({
                     title: label,
-                    command: 'latex-workshop.code-action',
+                    command: 'zed-workshop.code-action',
                     arguments: [document, d.range, d.code, d.message]
                 })
             }

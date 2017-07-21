@@ -2,6 +2,27 @@
   "figure":{
     "text":"figure"
   },
+  "schema":{
+	"text":"schema"
+  },
+  "axdef":{
+	"text":"axdef"
+  },
+  "gendef":{
+	"text":"gendef"
+  },
+  "zed":{
+	"text":"zed"
+  },
+  "argue":{
+	"text":"argue"
+  },
+  "syntax":{
+	"text":"syntax"
+  },
+  "infrule":{
+	"text":"infrule"
+  },
   "table":{
     "text":"table"
   },

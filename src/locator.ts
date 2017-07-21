@@ -54,7 +54,7 @@ export class Locator {
         }
         const filePath = vscode.window.activeTextEditor.document.uri.fsPath
         if (!this.extension.manager.isTex(filePath)) {
-            this.extension.logger.addLogMessage(`${filePath} is not a valid LaTeX file.`)
+            this.extension.logger.addLogMessage(`${filePath} is not a valid Zed file.`)
             return
         }
         const position = vscode.window.activeTextEditor.selection.active
@@ -62,7 +62,7 @@ export class Locator {
             this.extension.logger.addLogMessage(`Cannot get cursor position: ${position}`)
             return
         }
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
         const pdfFile = this.extension.manager.tex2pdf(this.extension.manager.rootFile)
         const args = ['view', '-i', `${position.line + 1}:${position.character + 1}:${filePath}`, "-o", pdfFile]
         this.extension.logger.addLogMessage(`Executing synctex with args ${args}`)
@@ -95,7 +95,7 @@ export class Locator {
     }
 
     locate(data: any, pdfPath: string) {
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
         const args = ['edit', '-o', `${data.page}:${data.pos[0]}:${data.pos[1]}:${pdfPath}`]
         this.extension.logger.addLogMessage(`Executing synctex with args ${args}`)
 

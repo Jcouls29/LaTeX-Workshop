@@ -10,16 +10,16 @@ export class Logger {
 
     constructor(extension: Extension) {
         this.extension = extension
-        this.logPanel = vscode.window.createOutputChannel('LaTeX Workshop')
-        this.addLogMessage('Initializing LaTeX Workshop.')
+        this.logPanel = vscode.window.createOutputChannel('Zed Workshop')
+        this.addLogMessage('Initializing Zed Workshop.')
         this.status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -10000)
-        this.status.command = 'latex-workshop.actions'
+        this.status.command = 'zed-workshop.actions'
         this.status.show()
-        this.displayStatus('repo', 'statusBar.foreground', 'LaTeX Workshop')
+        this.displayStatus('repo', 'statusBar.foreground', 'Zed Workshop')
     }
 
     addLogMessage(message: string) {
-        const configuration = vscode.workspace.getConfiguration('latex-workshop')
+        const configuration = vscode.workspace.getConfiguration('zed-workshop')
         if (configuration.get('debug.showLog')) {
             this.logPanel.append(`[${new Date().toLocaleTimeString('en-US', {hour12: false})}] ${message}\n`)
         }
@@ -50,12 +50,12 @@ export class Logger {
     }
 
     showLog() {
-        const uri = vscode.Uri.file(this.extension.manager.rootFile).with({scheme: 'latex-workshop-log'})
+        const uri = vscode.Uri.file(this.extension.manager.rootFile).with({scheme: 'zed-workshop-log'})
         let column = vscode.ViewColumn.Two
         if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn === vscode.ViewColumn.Two) {
             column = vscode.ViewColumn.Three
         }
-        vscode.commands.executeCommand("vscode.previewHtml", uri, column, 'Raw LaTeX Log')
+        vscode.commands.executeCommand("vscode.previewHtml", uri, column, 'Raw Zed Log')
         this.extension.logger.addLogMessage(`Open Log tab`)
     }
 }

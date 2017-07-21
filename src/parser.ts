@@ -36,7 +36,7 @@ export class Parser {
     isLaTeXmkSkipped: boolean
     buildLog: any[] = []
     buildLogRaw: string = ''
-    compilerDiagnostics = vscode.languages.createDiagnosticCollection('LaTeX')
+    compilerDiagnostics = vscode.languages.createDiagnosticCollection('Zed')
     linterDiagnostics = vscode.languages.createDiagnosticCollection('ChkTeX')
 
     constructor(extension: Extension) {
@@ -117,14 +117,14 @@ export class Parser {
             if (result) {
                 this.buildLog.push({
                     type: 'error',
-                    text: (result[3] && result[3] !== 'LaTeX') ? `${result[3]}: ${result[4]}` : result[4],
+                    text: (result[3] && result[3] !== 'Zed') ? `${result[3]}: ${result[4]}` : result[4],
                     file: result[1] ? path.resolve(this.extension.manager.rootDir, result[1]) : this.extension.manager.rootFile,
                     line: result[2] ? parseInt(result[2], 10) : undefined
                 })
                 continue
             }
         }
-        this.extension.logger.addLogMessage(`LaTeX log parsed with ${this.buildLog.length} messages.`)
+        this.extension.logger.addLogMessage(`Zed log parsed with ${this.buildLog.length} messages.`)
         this.showCompilerDiagnostics()
     }
 
@@ -165,7 +165,7 @@ export class Parser {
         for (const item of this.buildLog) {
             const range = new vscode.Range(new vscode.Position(item.line - 1, 0), new vscode.Position(item.line - 1, 65535))
             const diag = new vscode.Diagnostic(range, item.text, DIAGNOSTIC_SEVERITY[item.type])
-            diag.source = 'LaTeX'
+            diag.source = 'Zed'
             if (diagsCollection[item.file] === undefined) {
                 diagsCollection[item.file] = []
             }
