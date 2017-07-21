@@ -294,7 +294,7 @@
         },
         {
           "when": "resourceLangId == z",
-          "command": "zed-workshop.synctex",
+          "command": "zed-workshop.tab",
           "group": "navigation@101"
         },
         {

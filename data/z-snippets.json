@@ -15,7 +15,7 @@
 	}
 */
 	"Z-Schema":{
-		"prefix": "schema",
+		"prefix": ".schema",
 		"body":[
 			"\\begin{schema}{${1:name}}",
 			"\t${2:definition}",
@@ -26,7 +26,7 @@
 		"description":"New Schema Definition"
 	},
 	"Z-AxDef":{
-		"prefix":"axdef",
+		"prefix":".axdef",
 		"body":[
 			"\\begin{axdef}",
 			"\t${1:definition}",
@@ -35,7 +35,7 @@
 		"description": "New Axiom Definition"
 	},
 	"Z-GenDef":{
-		"prefix":"gendef",
+		"prefix":".gendef",
 		"body":[
 			"\\begin{gendef}[${1:params}]",
 			"\t${1:definition}",
@@ -43,7 +43,7 @@
 		]
 	},
 	"Z-Block":{
-		"prefix":"zed",
+		"prefix":".zed",
 		"body":[
 			"\\begin{zed}",
 			"\t${1:value}",
@@ -51,7 +51,7 @@
 		]
 	},
 	"Z-Argument":{
-		"prefix":"argue",
+		"prefix":".argue",
 		"body":[
 			"\\begin{argue}",
 			"\t${1:value}",
@@ -59,7 +59,7 @@
 		]
 	},
 	"Z-Syntax":{
-		"prefix":"syntax",
+		"prefix":".syntax",
 		"body":[
 			"\\begin{syntax}",
 			"\t${1:value}",
@@ -67,7 +67,7 @@
 		]
 	},
 	"Z-Inference-Rule":{
-		"prefix":"infrule",
+		"prefix":".infrule",
 		"body":[
 			"\\begin{infrule}",
 			"\t${1:rule}",
@@ -75,51 +75,51 @@
 		]
 	},
 	"Z-Function":{
-		"prefix": "fun",
+		"prefix": ".fun",
 		"body":["${1:left} \\fun ${2:right}"]
 	},
 	"Relation":{
-		"prefix":"rel",
+		"prefix":".rel",
 		"body":["${1:left} \\rel ${2:right}"]
 	},
 	"pfun":{
-		"prefix":"pfun",
+		"prefix":".pfun",
 		"body":["${1:left} \\pfun ${2:right}"]
 	},
 	"pinj":{
-		"prefix":"pinj",
+		"prefix":".pinj",
 		"body":["${1:left} \\pinj ${2:right}"]
 	},
 	"inj":{
-		"prefix":"inj",
+		"prefix":".inj",
 		"body":["${1:left} \\inj ${2:right}"]
 	},
 	"psurj":{
-		"prefix":"psurj",
+		"prefix":".psurj",
 		"body":["${1:left} \\psurj ${2:right}"]
 	},
 	"surj":{
-		"prefix":"surj",
+		"prefix":".surj",
 		"body":["${1:left} \\surj ${2:right}"]
 	},
 	"bij":{
-		"prefix":"bij",
+		"prefix":".bij",
 		"body":["${1:left} \\bij ${2:right}"]
 	},
 	"ffun":{
-		"prefix":"ffun",
+		"prefix":".ffun",
 		"body":["${1:left} \\ffun ${2:right}"]
 	},
 	"finj":{
-		"prefix":"finj",
+		"prefix":".finj",
 		"body":["${1:left} \\finj ${2:right}"]
 	},
 	"mapsto":{
-		"prefix":"mapsto",
+		"prefix":".mapsto",
 		"body":["${1:left} \\mapsto ${2:right}"]
 	},
 	"upto":{
-		"prefix":"upto",
+		"prefix":".upto",
 		"body":["${1:left} \\upto ${2:right}"]
 	}
 }
