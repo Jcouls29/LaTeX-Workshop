@@ -875,7 +875,7 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>text.tex.latex</string>
+					<string>text.z</string>
 				</dict>
 			</array>
 		</dict>
@@ -1725,7 +1725,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 		</dict>
 	</array>
 	<key>scopeName</key>
-	<string>text.tex.latex</string>
+	<string>text.z</string>
 	<key>uuid</key>
 	<string>3BEEA00C-6B1D-11D9-B8AD-000D93589AF6</string>
 </dict>

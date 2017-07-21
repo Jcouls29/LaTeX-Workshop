@@ -24,11 +24,12 @@ export class SectionNodeProvider implements vscode.TreeDataProvider<Section> {
             })
         })
 
-        extension.manager.fileWatcher.on('change', (path: string) => {
-            this.extension.logger.addLogMessage(`[outline]: responding to change in ${path}`)
-            this.refresh()
-        })
-
+        if (extension.manager.fileWatcher !== undefined){
+            extension.manager.fileWatcher.on('change', (path: string) => {
+                        this.extension.logger.addLogMessage(`[outline]: responding to change in ${path}`)
+                        this.refresh()
+                    })
+        }
     }
 
     refresh() : Section[] {
