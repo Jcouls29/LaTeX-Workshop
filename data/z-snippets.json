@@ -1,7 +1,7 @@
 {
 /*
-	// Place your snippets for LaTeX here. Each snippet is defined under a snippet name and has a prefix, body and 
-	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// Place your bodys for LaTeX here. Each body is defined under a body name and has a prefix, body and 
+	// description. The prefix is what is used to trigger the body and the body will be expanded and inserted. Possible variables are:
 	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
 	// same ids are connected.
 	// Example:
@@ -17,8 +17,8 @@
 	"Z-Schema":{
 		"prefix": "schema",
 		"body":[
-			"\\begin{schema}",
-			"\t",
+			"\\begin{schema}{${1:name}}",
+			"\t${2:definition}",
 			"\\where",
 			"\t",
 			"\\end{schema}"
@@ -29,7 +29,7 @@
 		"prefix":"axdef",
 		"body":[
 			"\\begin{axdef}",
-			"\t",
+			"\t${1:definition}",
 			"\\end{axdef}"
 		],
 		"description": "New Axiom Definition"
@@ -38,12 +38,88 @@
 		"prefix":"gendef",
 		"body":[
 			"\\begin{gendef}[${1:params}]",
-			"\t",
+			"\t${1:definition}",
 			"\\end{gendef}"
+		]
+	},
+	"Z-Block":{
+		"prefix":"zed",
+		"body":[
+			"\\begin{zed}",
+			"\t${1:value}",
+			"\\end{zed}"
+		]
+	},
+	"Z-Argument":{
+		"prefix":"argue",
+		"body":[
+			"\\begin{argue}",
+			"\t${1:value}",
+			"\\end{argue}"	
+		]
+	},
+	"Z-Syntax":{
+		"prefix":"syntax",
+		"body":[
+			"\\begin{syntax}",
+			"\t${1:value}",
+			"\\end{syntax}"
+		]
+	},
+	"Z-Inference-Rule":{
+		"prefix":"infrule",
+		"body":[
+			"\\begin{infrule}",
+			"\t${1:rule}",
+			"\\end{infrule}"
 		]
 	},
 	"Z-Function":{
 		"prefix": "fun",
 		"body":["${1:left} \\fun ${2:right}"]
+	},
+	"Relation":{
+		"prefix":"rel",
+		"body":["${1:left} \\rel ${2:right}"]
+	},
+	"pfun":{
+		"prefix":"pfun",
+		"body":["${1:left} \\pfun ${2:right}"]
+	},
+	"pinj":{
+		"prefix":"pinj",
+		"body":["${1:left} \\pinj ${2:right}"]
+	},
+	"inj":{
+		"prefix":"inj",
+		"body":["${1:left} \\inj ${2:right}"]
+	},
+	"psurj":{
+		"prefix":"psurj",
+		"body":["${1:left} \\psurj ${2:right}"]
+	},
+	"surj":{
+		"prefix":"surj",
+		"body":["${1:left} \\surj ${2:right}"]
+	},
+	"bij":{
+		"prefix":"bij",
+		"body":["${1:left} \\bij ${2:right}"]
+	},
+	"ffun":{
+		"prefix":"ffun",
+		"body":["${1:left} \\ffun ${2:right}"]
+	},
+	"finj":{
+		"prefix":"finj",
+		"body":["${1:left} \\finj ${2:right}"]
+	},
+	"mapsto":{
+		"prefix":"mapsto",
+		"body":["${1:left} \\mapsto ${2:right}"]
+	},
+	"upto":{
+		"prefix":"upto",
+		"body":["${1:left} \\upto ${2:right}"]
 	}
 }

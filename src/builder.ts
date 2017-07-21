@@ -98,7 +98,7 @@ export class Builder {
                 return undefined
             }
             if (command.args) {
-                command.args = command.args.map(arg => arg.replace('%DOC%', rootFile.replace(/\.zed$/, ''))
+                command.args = command.args.map(arg => arg.replace('%DOC%', rootFile)
                                                           .replace('%DOCFILE%', rootFile)
                                                           .replace('%DIR%', path.dirname(rootFile)))
             }
