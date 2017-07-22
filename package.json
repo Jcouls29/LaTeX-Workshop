@@ -75,33 +75,9 @@
         "category": "Zed Workshop"
       },
       {
-        "command": "zed-workshop.tab",
-        "title": "View PDF file in new tab",
-        "category": "Zed Workshop"
-      },
-      {
-        "command": "zed-workshop.synctex",
-        "title": "SyncTeX from cursor",
-        "category": "Zed Workshop"
-      },
-      {
         "command": "zed-workshop.clean",
         "title": "Clean up auxiliary files",
         "category": "Zed Workshop"
-      },
-      {
-        "command": "zed-workshop.citation",
-        "title": "Open citation browser",
-        "category": "Zed Workshop"
-      },
-      {
-        "command": "zed-workshop.log",
-        "title": "Show LaTeX log",
-        "category": "Zed Workshop"
-      },
-      {
-        "command": "zed-workshop.actions",
-        "title": "Zed Workshop: All actions"
       }
     ],
     "keybindings": [
@@ -113,21 +89,6 @@
       {
         "command": "zed-workshop.view",
         "key": "ctrl+alt+v",
-        "when": "editorFocus && !replaceActive && !searchViewletVisible && !findWidgetVisible"
-      },
-      {
-        "command": "zed-workshop.tab",
-        "key": "ctrl+alt+t",
-        "when": "editorFocus && !replaceActive && !searchViewletVisible && !findWidgetVisible"
-      },
-      {
-        "command": "zed-workshop.synctex",
-        "key": "ctrl+alt+s",
-        "when": "editorFocus && !replaceActive && !searchViewletVisible && !findWidgetVisible"
-      },
-      {
-        "command": "zed-workshop.actions",
-        "key": "ctrl+alt+l",
         "when": "editorFocus && !replaceActive && !searchViewletVisible && !findWidgetVisible"
       }
     ],
@@ -294,12 +255,12 @@
         },
         {
           "when": "resourceLangId == z",
-          "command": "zed-workshop.tab",
+          "command": "zed-workshop.view",
           "group": "navigation@101"
         },
         {
           "when": "resourceLangId == z",
-          "command": "zed-workshop.actions",
+          "command": "zed-workshop.clean",
           "group": "navigation@102"
         }
       ]

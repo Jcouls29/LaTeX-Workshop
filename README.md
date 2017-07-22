@@ -1,4 +1,4 @@
-# Visual Studio Code LaTeX Workshop Extension
+# Visual Studio Code Zed Workshop Extension
 
 [![version](https://vsmarketplacebadge.apphb.com/version/James-Yu.latex-workshop.svg)](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)
 [![installs](https://vsmarketplacebadge.apphb.com/installs-short/James-Yu.latex-workshop.svg)](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)
@@ -9,28 +9,28 @@
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/James-Yu/LaTeX-Workshop.svg)](https://github.com/James-Yu/LaTeX-Workshop/issues)
 
 
-LaTeX Workshop is an extension for [Visual Studio Code](https://code.visualstudio.com/), aiming to provide all-in-one features and utilities for LaTeX typesetting with Visual Studio Code.
+Zed Workshop is an extension for [Visual Studio Code](https://code.visualstudio.com/), aiming to provide all-in-one features and utilities for Z-Notation typesetting with Visual Studio Code.
 
 ## Features
 
-- Build LaTeX (including BibTeX) to PDF automatically on save.
+- Build Z to PDF automatically on save.
 - View PDF on-the-fly (in VS Code or browser).
-- Direct and reverse SyncTeX. Click to jump between location in `.tex` source and PDF and vice versa.
-- Intellisense, including completions for bibliography keys (`\cite{}`) and labels (`\ref{}`).
-- Syntax highlighting (colorized code) for `.tex` / `.bib` files and more.
+- Direct and reverse SyncTeX. Click to jump between location in `.zed` source and PDF and vice versa.
+- Syntax highlighting (colorized code) for `.zed`.
 - LaTeX log parser, with errors and warnings in LaTeX build automatically reported in VS Code.
-- Real-time linting of LaTeX with ChkTeX to pick up common LaTeX issues as you type.
+- Real-time linting of Zed with ChkTeX to pick up common LaTeX issues as you type.
   - Code Actions (automatic fixes) are offered for many issues found by ChkTeX.
 
 ## Requirements
 
 - LaTeX distribution in system PATH. For example, [TeX Live](https://www.tug.org/texlive/).
   - Please note [MikTeX](https://miktex.org/) does not ship with SyncTeX. See [this link](http://tex.stackexchange.com/questions/338078/how-to-get-synctex-for-windows-to-allow-atom-pdf-view-to-synch#comment877274_338117) for a possible solution.
+- Perl (for `latexmk` to work)
 - _Optional_: [Set your LaTeX toolchain](#toolchain) (LaTeX Workshop should just work out of the box for users with `latexmk` installed).
 
 ## Installation
 
-Installing LaTeX Workshop is simple. You can find it in [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop), or simply run `ext install latex-workshop` in VS Code Quick Open (`ctrl`/`cmd` + `P`).
+Installing Zed Workshop is simple. You can find it in [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop), or simply run `ext install zed-workshop` in VS Code Quick Open (`ctrl`/`cmd` + `P`).
 
 Alternatively, you can check out this repository and copy it to the VS Code local extensions folder:
 - Windows `%USERPROFILE%\.vscode\extensions`
@@ -38,34 +38,15 @@ Alternatively, you can check out this repository and copy it to the VS Code loca
 
 ## Usage
 
-- Open a `.tex` file, right click and many features have menu entries there.
-  - For a complete list, select `LaTeX Workshop Actions` entry.
+- Open a `.zed` file, right click and many features have menu entries there.
+  - For a complete list, select `Zed Workshop Actions` entry.
 - For reverse SyncTeX from PDF to LaTeX, `ctrl`/`cmd` + left mouse click in the PDF.
 - Alternatively, VS Code commands are provided in VS Code Command Palette (`ctrl`/`cmd` + `shift` + `P`).
-  - Type `latex workshop` to show all related commands.
-
-## Linting with `ChkTeX`
-
-If you have [`ChkTeX`](http://www.nongnu.org/chktex) installed as part of your LaTeX distribution, Latex Workshop can run it against your LaTeX files in order to highlight issues.
-
-To enable linting, set `latex-workshop.chktex.enabled: true` in settings.
-
-The current file will be linted after a brief pause in typing. The full project will be linted upon opening VS Code for the first time, and each time you hit save. Warnings and errors are shown in the `Problems` pane - you can click on each entry to go to the relevant position where ChkTeX has found an issue.
-
-For details on how to interpret the reported issues, consult the [ChkTeX manual](http://www.nongnu.org/chktex/ChkTeX.pdf).
-
-### Code actions
-
-For many issues, LaTeX Workshop will offer **Code Actions** to help you correct your LaTeX files. If you take your mouse to a highlighted error, you will see a lightbulb in the gutter if LaTeX Workshop is able to propose a solution to the problem. 
-Alternatively, you can hit `ctrl`/`cmd` + `.` whilst the cursor is on a highlighted area to trigger the same dropdown.
-Choose the item in the menu to have LaTeX Workshop attempt to fix the issue:
-
-![Code Actions](https://cloud.githubusercontent.com/assets/1312873/24458498/0303c3ca-1491-11e7-8685-f743ddb0838c.gif)
-
+  - Type `zed workshop` to show all related commands.
 
 ## FAQ
 ### <a name="toolchain"></a>LaTeX toolchain?
-LaTeX toolchain refers to a sequence/array of commands which LaTeX Workshop will execute sequentially when building LaTeX projects. It is set in `File`>`Preferences`>`Settings`>`latex-workshop.latex.toolchain`. This configuration item is an array of objects, which should have a `command` field and an optional `args` array field. The former defines the command that will be invoked in each step of the toolchain, while the latter defines the arguments that will be passed alongside with the command.
+LaTeX toolchain refers to a sequence/array of commands which Zed Workshop will execute sequentially when building Z projects. It is set in `File`>`Preferences`>`Settings`>`zed-workshop.zed.toolchain`. This configuration item is an array of objects, which should have a `command` field and an optional `args` array field. The former defines the command that will be invoked in each step of the toolchain, while the latter defines the arguments that will be passed alongside with the command.
 
 By default [`latexmk`](http://personal.psu.edu/jcc8/software/latexmk/) is used. This tool is bundled in most LaTeX distributions, and requires perl to execute. For non-perl users, the following `texify` toolchain from MikTeX may worth a try:
 ```

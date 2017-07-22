@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import * as opn from 'opn'
 
 import {Logger, LogProvider} from './logger'
-import {Commander} from './commander'
+import * as comm from './commands/Commands'
 import {Manager} from './manager'
 import {Builder} from './builder'
 import {CodeActions} from './codeactions'
@@ -105,16 +105,17 @@ function newVersionMessage(extensionPath: string, extension: Extension) {
 export async function activate(context: vscode.ExtensionContext) {
     const extension = new Extension()
 
-    vscode.commands.registerCommand('zed-workshop.build', () => extension.commander.build())
-    vscode.commands.registerCommand('zed-workshop.view', () => extension.commander.view())
-    vscode.commands.registerCommand('zed-workshop.tab', () => extension.commander.tab())
-    vscode.commands.registerCommand('zed-workshop.synctex', () => extension.commander.synctex())
-    vscode.commands.registerCommand('zed-workshop.clean', () => extension.commander.clean())
-    vscode.commands.registerCommand('zed-workshop.actions', () => extension.commander.actions())
-    vscode.commands.registerCommand('zed-workshop.citation', () => extension.commander.citation())
-    vscode.commands.registerCommand('zed-workshop.log', () => extension.commander.log())
-    vscode.commands.registerCommand('zed-workshop.code-action', (d, r, c, m) => extension.codeActions.runCodeAction(d, r, c, m))
-    vscode.commands.registerCommand('zed-workshop.goto-section', (filePath, lineNumber) => extension.commander.gotoSection(filePath, lineNumber))
+    // Defined available commands here
+    // TODO: Move to a DI (IOC) Container
+    let commands: comm.ICommand[] = [
+        new comm.BuildCommand(extension.logger, extension.manager, extension.builder),
+        new comm.ViewCommand(extension.logger, extension.manager, extension.viewer),
+        new comm.CleanCommand(extension.logger, extension.manager, extension.cleaner)
+    ];
+
+    for (let c of commands){
+        vscode.commands.registerCommand(c.name, () => c.command());
+    }
 
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((e: vscode.TextDocument) => {
         if (extension.manager.isTex(e.fileName)) {
@@ -125,7 +126,7 @@ export async function activate(context: vscode.ExtensionContext) {
             return
         }
         if (extension.manager.isTex(e.fileName)) {
-            extension.commander.build()
+            vscode.commands.executeCommand('zed-workshop.build')
         }
     }))
 
@@ -199,7 +200,6 @@ export class Extension {
     packageInfo
     extensionRoot: string
     logger: Logger
-    commander: Commander
     manager: Manager
     builder: Builder
     viewer: Viewer
@@ -216,7 +216,6 @@ export class Extension {
     constructor() {
         this.extensionRoot = path.resolve(`${__dirname}/../../`)
         this.logger = new Logger(this)
-        this.commander = new Commander(this)
         this.manager = new Manager(this)
         this.builder = new Builder(this)
         this.viewer = new Viewer(this)
