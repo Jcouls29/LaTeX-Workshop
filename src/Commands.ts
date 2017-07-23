@@ -4,7 +4,6 @@ import { Logger } from "./logger";
 import { Manager } from "./manager";
 import { Builder } from "./builder";
 import { Viewer } from "./viewer";
-import { Cleaner } from "./cleaner";
 import { Helpers } from "./helpers";
 
 export interface ICommand {
@@ -94,27 +93,5 @@ export class ViewCommand extends BaseCommand {
         } else {
             this.logger.addLogMessage(`Cannot find Zed root PDF to view.`)
         }
-    }
-}
-
-export class CleanCommand extends BaseCommand {
-    readonly cleaner: Cleaner;
-    readonly manager: Manager;
-    readonly name: string = 'zed-workshop.clean';
-    readonly label: string = 'CLEAN';
-
-    public constructor(logger: Logger, manager: Manager, cleaner: Cleaner){
-        super(logger);
-
-        if (manager === undefined) throw new ReferenceError('manager not defined.');
-        if (cleaner === undefined) throw new ReferenceError('cleaner not defined.');
-
-        this.manager = manager;
-        this.cleaner = cleaner;
-    }
-
-    protected commandAction() {
-        this.manager.findRoot()
-        this.cleaner.clean()
     }
 }

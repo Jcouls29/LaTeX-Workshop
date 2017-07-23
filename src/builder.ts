@@ -7,10 +7,8 @@ import { Parser } from "./parser";
 import { Logger, LogProvider } from "./logger";
 import { Viewer } from "./viewer";
 import { Manager } from "./manager";
-import { Cleaner } from "./cleaner";
 
 export class Builder {
-    readonly cleaner: Cleaner;
     readonly provider: LogProvider;
     readonly manager: Manager;
     readonly viewer: Viewer;
@@ -21,13 +19,12 @@ export class Builder {
 
     constructor(logger: Logger, parser: Parser, 
                 viewer: Viewer, manager: Manager,
-                cleaner: Cleaner, provider: LogProvider) {
+                provider: LogProvider) {
 
         this.logger = logger;
         this.parser = parser;
         this.viewer = viewer;
         this.manager = manager;
-        this.cleaner = cleaner;
         this.provider = provider;
     }
 
@@ -93,11 +90,6 @@ export class Builder {
         this.logger.addLogMessage(`Successfully built ${rootFile}`)
         this.logger.displayStatus('check', 'statusBar.foreground', `Zed toolchain succeeded.`)
         this.viewer.refreshExistingViewer(rootFile)
-        const configuration = vscode.workspace.getConfiguration('zed-workshop')
-        const clean = configuration.get('zed.clean.enabled') as boolean
-        if (clean) {
-            this.cleaner.clean()
-        }
     }
 
     createToolchain(rootFile: string) : ToolchainCommand[] | undefined  {

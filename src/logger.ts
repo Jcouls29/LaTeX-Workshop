@@ -12,7 +12,6 @@ export class Logger {
         this.logPanel = vscode.window.createOutputChannel('Zed Workshop')
         this.addLogMessage('Initializing Zed Workshop.')
         this.status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -10000)
-        this.status.command = 'zed-workshop.actions'
         this.status.show()
         this.displayStatus('repo', 'statusBar.foreground', 'Zed Workshop')
     }

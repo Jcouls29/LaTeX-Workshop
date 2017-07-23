@@ -4,7 +4,6 @@ import * as path from 'path'
 
 import { Extension } from './../main'
 
-
 export class SectionNodeProvider implements vscode.TreeDataProvider<Section> {
 
     private _onDidChangeTreeData: vscode.EventEmitter<Section | undefined> = new vscode.EventEmitter<Section | undefined>()

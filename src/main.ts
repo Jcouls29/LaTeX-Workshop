@@ -13,7 +13,6 @@ import {Server} from './server'
 import {Parser} from './parser'
 import {Completer} from './completer'
 import {Linter} from './linter'
-import {Cleaner} from './cleaner'
 import {SectionNodeProvider} from './providers/outline'
 import { Command } from "./providers/command";
 
@@ -111,8 +110,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // TODO: Move to a DI (IOC) Container
     let commands: comm.ICommand[] = [
         new comm.BuildCommand(extension.logger, extension.manager, extension.builder),
-        new comm.ViewCommand(extension.logger, extension.manager, extension.viewer),
-        new comm.CleanCommand(extension.logger, extension.manager, extension.cleaner)
+        new comm.ViewCommand(extension.logger, extension.manager, extension.viewer)
     ];
 
     for (let c of commands){
@@ -208,7 +206,6 @@ export class Extension {
     parser: Parser
     completer: Completer
     linter: Linter
-    cleaner: Cleaner
     codeActions: CodeActions
 
     logProvider: LogProvider
@@ -220,14 +217,13 @@ export class Extension {
         this.manager = new Manager(this.logger, command)
         this.completer = new Completer(this.logger, this.manager, command)
         this.parser = new Parser(this.logger, this.manager)
-        this.cleaner = new Cleaner(this.logger, this.manager)
         this.linter = new Linter(this.logger, this.parser, this.manager)
         this.server = new Server(this.logger)
         this.viewer = new Viewer(this.logger, this.manager, this.server)
         
         this.codeActions = new CodeActions()
         this.logProvider = new LogProvider(this.parser)
-        this.builder = new Builder(this.logger, this.parser, this.viewer, this.manager, this.cleaner, this.logProvider)
+        this.builder = new Builder(this.logger, this.parser, this.viewer, this.manager, this.logProvider)
         
         this.logger.addLogMessage(`Zed Workshop initialized.`)
     }
