@@ -103,6 +103,16 @@ function newVersionMessage(extensionPath: string, extension: Extension) {
     })
 }
 
+    function gotoSection(filePath: string, lineNumber: number) {
+        vscode.workspace.openTextDocument(filePath).then((doc) => {
+            vscode.window.showTextDocument(doc).then((_) => {
+                //editor.selection = new vscode.Selection(new vscode.Position(lineNumber,0), new vscode.Position(lineNumber,0))
+                vscode.commands.executeCommand("revealLine", { lineNumber: lineNumber, at: 'top'})
+            })
+        })
+
+    }
+
 export async function activate(context: vscode.ExtensionContext) {
     const extension = new Extension()
 
@@ -116,6 +126,9 @@ export async function activate(context: vscode.ExtensionContext) {
     for (let c of commands){
         vscode.commands.registerCommand(c.name, () => c.command());
     }
+
+    vscode.commands.registerCommand('zed-workshop.goto-section', 
+        (filePath, lineNumber) => gotoSection(filePath, lineNumber))
 
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((e: vscode.TextDocument) => {
         if (extension.manager.isTex(e.fileName)) {
