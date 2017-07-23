@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
-
-import {Extension} from './main'
+import { Logger } from "./logger";
+import { Manager } from "./manager";
 
 const latexPattern = /^Output\swritten\son\s(.*)\s\(.*\)\.$/gm
 const latexFatalPattern = /Fatal error occurred, no output PDF file produced!/gm
@@ -32,15 +32,18 @@ interface LinterLogEntry {
 }
 
 export class Parser {
-    extension: Extension
+    readonly logger: Logger;
+    readonly manager: Manager;
+
     isLaTeXmkSkipped: boolean
     buildLog: any[] = []
     buildLogRaw: string = ''
     compilerDiagnostics = vscode.languages.createDiagnosticCollection('z')
     linterDiagnostics = vscode.languages.createDiagnosticCollection('ChkTeX')
 
-    constructor(extension: Extension) {
-        this.extension = extension
+    constructor(logger: Logger, manager: Manager) {
+        this.logger = logger;
+        this.manager = manager;
     }
 
     parse(log: string) {
@@ -98,7 +101,7 @@ export class Parser {
                 this.buildLog.push({
                     type: 'typesetting',
                     text: result[1],
-                    file: this.extension.manager.rootFile,
+                    file: this.manager.rootFile,
                     line: parseInt(result[2], 10)
                 })
                 continue
@@ -108,7 +111,7 @@ export class Parser {
                 this.buildLog.push({
                     type: 'warning',
                     text: result[3],
-                    file: this.extension.manager.rootFile,
+                    file: this.manager.rootFile,
                     line: parseInt(result[4])
                 })
                 continue
@@ -118,13 +121,13 @@ export class Parser {
                 this.buildLog.push({
                     type: 'error',
                     text: (result[3] && result[3] !== 'Zed') ? `${result[3]}: ${result[4]}` : result[4],
-                    file: result[1] ? path.resolve(this.extension.manager.rootDir, result[1]) : this.extension.manager.rootFile,
+                    file: result[1] ? path.resolve(this.manager.rootDir, result[1]) : this.manager.rootFile,
                     line: result[2] ? parseInt(result[2], 10) : undefined
                 })
                 continue
             }
         }
-        this.extension.logger.addLogMessage(`Zed log parsed with ${this.buildLog.length} messages.`)
+        this.logger.addLogMessage(`Zed log parsed with ${this.buildLog.length} messages.`)
         this.showCompilerDiagnostics()
     }
 
@@ -137,7 +140,7 @@ export class Parser {
             // path with what is provided
             const filePath = singleFileOriginalPath ? singleFileOriginalPath : match[1]
             linterLog.push({
-                file: path.isAbsolute(filePath) ? filePath : path.resolve(this.extension.manager.rootDir, filePath),
+                file: path.isAbsolute(filePath) ? filePath : path.resolve(this.manager.rootDir, filePath),
                 line: parseInt(match[2]),
                 position: parseInt(match[3]),
                 length: parseInt(match[4]),
@@ -147,7 +150,7 @@ export class Parser {
             })
             match = re.exec(log)
         }
-        this.extension.logger.addLogMessage(`Linter log parsed with ${linterLog.length} messages.`)
+        this.logger.addLogMessage(`Linter log parsed with ${linterLog.length} messages.`)
         if (singleFileOriginalPath === undefined) {
             // A full lint of the project has taken place - clear all previous results.
             this.linterDiagnostics.clear()
@@ -191,7 +194,7 @@ export class Parser {
             diagsCollection[item.file].push(diag)
         }
         for (const file in diagsCollection) {
-            if (this.extension.manager.isTex(file)) {
+            if (this.manager.isTex(file)) {
                 // only report ChkTeX errors on TeX files. This is done to avoid
                 // reporting errors in .sty files which for most users is irrelevant.
                 this.linterDiagnostics.set(vscode.Uri.file(file), diagsCollection[file])

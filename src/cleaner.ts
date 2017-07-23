@@ -2,19 +2,21 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import * as fs from 'fs'
 import * as glob from 'glob'
-
-import {Extension} from './main'
+import { Logger } from "./logger";
+import { Manager } from "./manager";
 
 export class Cleaner {
-    extension: Extension
+    readonly manager: Manager;
+    readonly logger: Logger;
 
-    constructor(extension: Extension) {
-        this.extension = extension
+    constructor(logger: Logger, manager: Manager) {
+        this.logger = logger;
+        this.manager = manager;
     }
 
     clean() {
-        if (this.extension.manager.rootFile !== undefined) {
-            this.extension.manager.findRoot()
+        if (this.manager.rootFile !== undefined) {
+            this.manager.findRoot()
         }
         const configuration = vscode.workspace.getConfiguration('zed-workshop')
         const globs = configuration.get('zed.clean.fileTypes') as string[]
@@ -27,19 +29,19 @@ export class Cleaner {
             globs.forEach(globType => globOutDir.push(outdir + globType))
         }
         for (const globType of globs.concat(globOutDir)) {
-            glob(globType, {cwd: this.extension.manager.rootDir}, (err, files) => {
+            glob(globType, {cwd: this.manager.rootDir}, (err, files) => {
                 if (err) {
-                    this.extension.logger.addLogMessage(`Error identifying files with glob ${globType}: ${files}.`)
+                    this.logger.addLogMessage(`Error identifying files with glob ${globType}: ${files}.`)
                     return
                 }
                 for (const file of files) {
-                    const fullPath = path.resolve(this.extension.manager.rootDir, file)
+                    const fullPath = path.resolve(this.manager.rootDir, file)
                     fs.unlink(fullPath, unlinkErr => {
                         if (unlinkErr) {
-                            this.extension.logger.addLogMessage(`Error removing file: ${fullPath}`)
+                            this.logger.addLogMessage(`Error removing file: ${fullPath}`)
                             return
                         }
-                        this.extension.logger.addLogMessage(`File cleaned: ${fullPath}`)
+                        this.logger.addLogMessage(`File cleaned: ${fullPath}`)
                     })
                 }
             })

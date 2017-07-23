@@ -3,29 +3,46 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as cp from 'child_process'
 
-import {Extension} from './main'
+import { Parser } from "./parser";
+import { Logger, LogProvider } from "./logger";
+import { Viewer } from "./viewer";
+import { Manager } from "./manager";
+import { Cleaner } from "./cleaner";
 
 export class Builder {
-    extension: Extension
+    readonly cleaner: Cleaner;
+    readonly provider: LogProvider;
+    readonly manager: Manager;
+    readonly viewer: Viewer;
+    readonly parser: Parser;
+    readonly logger: Logger;
     currentProcess: cp.ChildProcess | undefined
     disableBuildAfterSave: boolean = false
 
-    constructor(extension: Extension) {
-        this.extension = extension
+    constructor(logger: Logger, parser: Parser, 
+                viewer: Viewer, manager: Manager,
+                cleaner: Cleaner, provider: LogProvider) {
+
+        this.logger = logger;
+        this.parser = parser;
+        this.viewer = viewer;
+        this.manager = manager;
+        this.cleaner = cleaner;
+        this.provider = provider;
     }
 
     build(rootFile: string) {
-        this.extension.logger.addLogMessage(`Build root file ${rootFile}`)
+        this.logger.addLogMessage(`Build root file ${rootFile}`)
         this.disableBuildAfterSave = true
         vscode.workspace.saveAll()
         this.disableBuildAfterSave = false
         if (this.currentProcess) {
             this.currentProcess.kill()
-            this.extension.logger.addLogMessage('Kill previous process')
+            this.logger.addLogMessage('Kill previous process')
         }
         const toolchain = this.createToolchain(rootFile)
         if (toolchain === undefined) {
-            this.extension.logger.addLogMessage('Invalid toolchain.')
+            this.logger.addLogMessage('Invalid toolchain.')
             return
         }
         this.buildStep(rootFile, toolchain, 0)
@@ -33,13 +50,13 @@ export class Builder {
 
     buildStep(rootFile: string, toolchain: ToolchainCommand[], index: number) {
         if (toolchain.length === index) {
-            this.extension.logger.addLogMessage(`Toolchain of length ${toolchain.length} finished.`)
+            this.logger.addLogMessage(`Toolchain of length ${toolchain.length} finished.`)
             this.buildFinished(rootFile)
             return
         }
 
-        this.extension.logger.addLogMessage(`Toolchain step ${index + 1}: ${toolchain[index].command}, ${toolchain[index].args}`)
-        this.extension.logger.displayStatus('sync', 'statusBar.foreground', `Zed build toolchain step ${index + 1}.`, 0)
+        this.logger.addLogMessage(`Toolchain step ${index + 1}: ${toolchain[index].command}, ${toolchain[index].args}`)
+        this.logger.displayStatus('sync', 'statusBar.foreground', `Zed build toolchain step ${index + 1}.`, 0)
         this.currentProcess = cp.spawn(toolchain[index].command, toolchain[index].args, {cwd: path.dirname(rootFile)})
 
         let stdout = ''
@@ -53,18 +70,18 @@ export class Builder {
         })
 
         this.currentProcess.on('error', err => {
-            this.extension.logger.addLogMessage(`Zed fatal error: ${err.message}, ${stderr}. Does the executable exist?`)
-            this.extension.logger.displayStatus('x', 'errorForeground', `Toolchain terminated with fatal error.`)
+            this.logger.addLogMessage(`Zed fatal error: ${err.message}, ${stderr}. Does the executable exist?`)
+            this.logger.displayStatus('x', 'errorForeground', `Toolchain terminated with fatal error.`)
             this.currentProcess = undefined
         })
 
         this.currentProcess.on('exit', (exitCode, signal) => {
-            this.extension.parser.parse(stdout)
-            const uri = vscode.Uri.file(this.extension.manager.rootFile).with({scheme: 'zed-workshop-log'})
-            this.extension.logProvider.update(uri)
+            this.parser.parse(stdout)
+            const uri = vscode.Uri.file(this.manager.rootFile).with({scheme: 'zed-workshop-log'})
+            this.provider.update(uri)
             if (exitCode !== 0) {
-                this.extension.logger.addLogMessage(`Toolchain returns with error: ${exitCode}/${signal}.${signal ? '\n' + stdout : ''}`)
-                this.extension.logger.displayStatus('x', 'errorForeground', `Zed toolchain terminated with error.`)
+                this.logger.addLogMessage(`Toolchain returns with error: ${exitCode}/${signal}.${signal ? '\n' + stdout : ''}`)
+                this.logger.displayStatus('x', 'errorForeground', `Zed toolchain terminated with error.`)
             } else {
                 this.buildStep(rootFile, toolchain, index + 1)
             }
@@ -73,13 +90,13 @@ export class Builder {
     }
 
     buildFinished(rootFile: string) {
-        this.extension.logger.addLogMessage(`Successfully built ${rootFile}`)
-        this.extension.logger.displayStatus('check', 'statusBar.foreground', `Zed toolchain succeeded.`)
-        this.extension.viewer.refreshExistingViewer(rootFile)
+        this.logger.addLogMessage(`Successfully built ${rootFile}`)
+        this.logger.displayStatus('check', 'statusBar.foreground', `Zed toolchain succeeded.`)
+        this.viewer.refreshExistingViewer(rootFile)
         const configuration = vscode.workspace.getConfiguration('zed-workshop')
         const clean = configuration.get('zed.clean.enabled') as boolean
         if (clean) {
-            this.extension.cleaner.clean()
+            this.cleaner.clean()
         }
     }
 
@@ -120,7 +137,7 @@ export class Builder {
         let program = ''
         if (result) {
             program = result[1]
-            this.extension.logger.addLogMessage(`Found program by magic comment: ${program}`)
+            this.logger.addLogMessage(`Found program by magic comment: ${program}`)
         } else {
             program = 'pdflatex'
         }

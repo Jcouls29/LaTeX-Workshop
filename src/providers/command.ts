@@ -1,18 +1,13 @@
 import * as vscode from 'vscode'
 import * as fs from 'fs'
+import { Manager } from "../manager";
+import { IProvider } from "./provider";
 
-import {Extension} from './../main'
-
-export class Command {
-    extension: Extension
+export class Command implements IProvider {
     suggestions: vscode.CompletionItem[]
     commandInTeX: { [id: string]: {[id: string]: AutocompleteEntry} } = {}
     refreshTimer: number
     defaultCommands: {[key: string]: vscode.CompletionItem} = {}
-
-    constructor(extension: Extension) {
-        this.extension = extension
-    }
 
     initialize(defaultCommands: {[key: string]: AutocompleteEntry},
                defaultSymbols: {[key: string]: AutocompleteEntry},
@@ -46,13 +41,13 @@ export class Command {
         })
     }
 
-    provide() : vscode.CompletionItem[] {
+    provide(manager: Manager) : vscode.CompletionItem[] {
         if (Date.now() - this.refreshTimer < 1000) {
             return this.suggestions
         }
         this.refreshTimer = Date.now()
         const suggestions = Object.assign({}, this.defaultCommands)
-        Object.keys(this.extension.manager.texFileTree).forEach(filePath => {
+        Object.keys(manager.texFileTree).forEach(filePath => {
             if (filePath in this.commandInTeX) {
                 Object.keys(this.commandInTeX[filePath]).forEach(key => {
                     if (!(key in suggestions)) {

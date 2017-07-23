@@ -1,15 +1,11 @@
 import * as vscode from 'vscode'
 
-import {Extension} from './../main'
+import {IProvider} from './provider'
+import { Manager } from "../manager";
 
-export class Environment {
-    extension: Extension
+export class Environment implements IProvider {
     suggestions: vscode.CompletionItem[] = []
     provideRefreshTime: number
-
-    constructor(extension: Extension) {
-        this.extension = extension
-    }
 
     initialize(defaultEnvs: {[key: string]: {text: string}}) {
         Object.keys(defaultEnvs).forEach(key => {
@@ -19,7 +15,7 @@ export class Environment {
         })
     }
 
-    provide() : vscode.CompletionItem[] {
+    provide(manager: Manager) : vscode.CompletionItem[] {
         return this.suggestions
     }
 }

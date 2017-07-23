@@ -2,19 +2,21 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import * as fs from 'fs'
 import * as chokidar from 'chokidar'
-
-import {Extension} from './main'
+import { Logger } from "./logger";
+import { Command } from "./providers/command";
 
 export class Manager {
-    extension: Extension
+    readonly command: Command;
+    readonly logger: Logger;
     rootFile: string
     texFileTree: { [id: string]: Set<string> } = {}
     fileWatcher: chokidar.FSWatcher
     bibWatcher: chokidar.FSWatcher
     watched: string[]
 
-    constructor(extension: Extension) {
-        this.extension = extension
+    constructor(logger: Logger, command: Command) {
+        this.logger = logger;
+        this.command = command;
         this.watched = []
     }
 
@@ -38,11 +40,11 @@ export class Manager {
             const rootFile = method()
             if (rootFile !== undefined) {
                 if (this.rootFile !== rootFile) {
-                    this.extension.logger.addLogMessage(`Root file changed from: ${this.rootFile}. Find all dependencies.`)
+                    this.logger.addLogMessage(`Root file changed from: ${this.rootFile}. Find all dependencies.`)
                     this.rootFile = rootFile
                     this.findAllDependentFiles()
                 } else {
-                    this.extension.logger.addLogMessage(`Root file remains unchanged from: ${this.rootFile}.`)
+                    this.logger.addLogMessage(`Root file remains unchanged from: ${this.rootFile}.`)
                 }
                 return rootFile
             }
@@ -60,7 +62,7 @@ export class Manager {
         const result = content.match(regex)
         if (result) {
             const file = path.resolve(path.dirname(vscode.window.activeTextEditor.document.fileName), result[1])
-            this.extension.logger.addLogMessage(`Found root file by magic comment: ${file}`)
+            this.logger.addLogMessage(`Found root file by magic comment: ${file}`)
             return file
         }
         return undefined
@@ -75,7 +77,7 @@ export class Manager {
         const result = content.match(regex)
         if (result) {
             const file = vscode.window.activeTextEditor.document.fileName
-            this.extension.logger.addLogMessage(`Found root file from active editor: ${file}`)
+            this.logger.addLogMessage(`Found root file from active editor: ${file}`)
             return file
         }
         return undefined
@@ -104,7 +106,7 @@ export class Manager {
                 const result = content.toString().match(regex)
                 if (result) {
                     file = path.resolve(vscode.workspace.rootPath, file)
-                    this.extension.logger.addLogMessage(`Found root file in root directory: ${file}`)
+                    this.logger.addLogMessage(`Found root file in root directory: ${file}`)
                     return file
                 }
             }
@@ -117,26 +119,26 @@ export class Manager {
         if (this.fileWatcher !== undefined && this.watched.indexOf(this.rootFile) < 0) {
             // We have an instantiated fileWatcher, but the rootFile is not being watched.
             // => the user has changed the root. Clean up the old watcher so we reform it.
-            this.extension.logger.addLogMessage(`Root file changed -> cleaning up old file watcher.`)
+            this.logger.addLogMessage(`Root file changed -> cleaning up old file watcher.`)
             this.fileWatcher.close()
             this.watched = []
             prevWatcherClosed = true
         }
 
         if (prevWatcherClosed || this.fileWatcher === undefined) {
-            this.extension.logger.addLogMessage(`Instatiating new file watcher for ${this.rootFile}`)
+            this.logger.addLogMessage(`Instatiating new file watcher for ${this.rootFile}`)
             this.fileWatcher = chokidar.watch(this.rootFile)
             this.watched.push(this.rootFile)
             this.fileWatcher.on('change', (path: string) => {
-                this.extension.logger.addLogMessage(`File watcher: responding to change in ${path}`)
+                this.logger.addLogMessage(`File watcher: responding to change in ${path}`)
                 this.findDependentFiles(path)
             })
             this.fileWatcher.on('unlink', (path: string) => {
-                this.extension.logger.addLogMessage(`File watcher: ${path} deleted.`)
+                this.logger.addLogMessage(`File watcher: ${path} deleted.`)
                 this.fileWatcher.unwatch(path)
                 this.watched.splice(this.watched.indexOf(path), 1)
                 if (path === this.rootFile) {
-                    this.extension.logger.addLogMessage(`Deleted ${path} was root - triggering root search`)
+                    this.logger.addLogMessage(`Deleted ${path} was root - triggering root search`)
                     this.findRoot()
                 }
             })
@@ -145,7 +147,7 @@ export class Manager {
     }
 
     findDependentFiles(filePath: string) {
-        this.extension.logger.addLogMessage(`Parsing ${filePath}`)
+        this.logger.addLogMessage(`Parsing ${filePath}`)
         const content = fs.readFileSync(filePath, 'utf-8')
 
         const inputReg = /(?:\\(?:input|include|subfile)(?:\[[^\[\]\{\}]*\])?){([^}]*)}/g
@@ -166,7 +168,7 @@ export class Manager {
             if (fs.existsSync(inputFilePath)) {
                 this.texFileTree[filePath].add(inputFilePath)
                 if (this.watched.indexOf(inputFilePath) < 0) {
-                    this.extension.logger.addLogMessage(`Adding ${inputFilePath} to file watcher.`)
+                    this.logger.addLogMessage(`Adding ${inputFilePath} to file watcher.`)
                     this.fileWatcher.add(inputFilePath)
                     this.watched.push(inputFilePath)
                     this.findDependentFiles(inputFilePath)
@@ -174,7 +176,6 @@ export class Manager {
             }
         }
 
-        this.extension.completer.command.getCommandsTeX(filePath)
-        this.extension.completer.reference.getReferencesTeX(filePath)
+        this.command.getCommandsTeX(filePath)
     }
 }

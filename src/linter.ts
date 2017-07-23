@@ -2,23 +2,29 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import {ChildProcess, spawn, SpawnOptions} from 'child_process'
 import {EOL} from 'os'
-
-import {Extension} from './main'
+import { Logger } from "./logger";
+import { Parser } from "./parser";
+import { Manager } from "./manager";
 
 export class Linter {
-    extension: Extension
+    readonly manager: Manager;
+    readonly parser: Parser;
+    readonly logger: Logger;
+
     linterTimeout: NodeJS.Timer
     currentProcesses: {[linterId: string]: ChildProcess} = {}
 
-    constructor(extension: Extension) {
-        this.extension = extension
+    constructor(logger: Logger, parser: Parser, manager: Manager) {
+        this.logger = logger;
+        this.parser = parser;
+        this.manager = manager;
     }
 
     async lintActiveFile() {
         if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document.getText()) {
             return
         }
-        this.extension.logger.addLogMessage(`Linter for active file started.`)
+        this.logger.addLogMessage(`Linter for active file started.`)
         const filePath = vscode.window.activeTextEditor.document.fileName
         const content = vscode.window.activeTextEditor.document.getText()
 
@@ -39,12 +45,12 @@ export class Linter {
         }
         // provide the original path to the active file as the second argument, so
         // we report this second path in the diagnostics instead of the temporary one.
-        this.extension.parser.parseLinter(stdout, filePath)
+        this.parser.parseLinter(stdout, filePath)
     }
 
     async lintRootFile() {
-        this.extension.logger.addLogMessage(`Linter for root file started.`)
-        const filePath = this.extension.manager.rootFile
+        this.logger.addLogMessage(`Linter for root file started.`)
+        const filePath = this.manager.rootFile
 
         const configuration = vscode.workspace.getConfiguration('zed-workshop')
         const command = configuration.get('chktex.path') as string
@@ -53,7 +59,7 @@ export class Linter {
 
         let stdout: string
         try {
-            stdout = await this.processWrapper('root file', command, args.concat(requiredArgs).filter(arg => arg !== ''), {cwd: path.dirname(this.extension.manager.rootFile)})
+            stdout = await this.processWrapper('root file', command, args.concat(requiredArgs).filter(arg => arg !== ''), {cwd: path.dirname(this.manager.rootFile)})
         } catch (err) {
             if ('stdout' in err) {
                 stdout = err.stdout
@@ -61,11 +67,11 @@ export class Linter {
                 return
             }
         }
-        this.extension.parser.parseLinter(stdout)
+        this.parser.parseLinter(stdout)
     }
 
     processWrapper(linterId: string, command: string, args: string[], options: SpawnOptions, stdin?: string) : Promise<string> {
-        this.extension.logger.addLogMessage(`Linter for ${linterId} running command ${command} with arguments ${args}`)
+        this.logger.addLogMessage(`Linter for ${linterId} running command ${command} with arguments ${args}`)
         return new Promise((resolve, reject) => {
             if (this.currentProcesses[linterId]) {
                 this.currentProcesses[linterId].kill()
@@ -87,17 +93,17 @@ export class Linter {
             })
 
             proc.on('error', err => {
-                this.extension.logger.addLogMessage(`Linter for ${linterId} failed to spawn command, encountering error: ${err.message}`)
+                this.logger.addLogMessage(`Linter for ${linterId} failed to spawn command, encountering error: ${err.message}`)
                 return reject(err)
             })
 
             proc.on('exit', exitCode => {
                 if (exitCode !== 0) {
-                    this.extension.logger.addLogMessage(`Linter for ${linterId} failed with exit code ${exitCode} and error:\n  ${stderr}`)
+                    this.logger.addLogMessage(`Linter for ${linterId} failed with exit code ${exitCode} and error:\n  ${stderr}`)
                     return reject({ exitCode, stdout, stderr})
                 } else {
                     const [s, ms] = process.hrtime(startTime)
-                    this.extension.logger.addLogMessage(`Linter for ${linterId} successfully finished in ${s}s ${Math.round(ms / 1000000)}ms`)
+                    this.logger.addLogMessage(`Linter for ${linterId} successfully finished in ${s}s ${Math.round(ms / 1000000)}ms`)
                     return resolve(stdout)
                 }
             })

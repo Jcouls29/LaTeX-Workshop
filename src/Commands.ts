@@ -1,11 +1,11 @@
 import * as vscode from 'vscode'
 
-import { Logger } from "../logger";
-import { Manager } from "../manager";
-import { Builder } from "../builder";
-import { Viewer } from "../viewer";
-import { Cleaner } from "../cleaner";
-import { Helpers } from "../helpers";
+import { Logger } from "./logger";
+import { Manager } from "./manager";
+import { Builder } from "./builder";
+import { Viewer } from "./viewer";
+import { Cleaner } from "./cleaner";
+import { Helpers } from "./helpers";
 
 export interface ICommand {
     readonly name: string;

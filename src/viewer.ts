@@ -5,7 +5,9 @@ import * as opn from 'opn'
 import * as WebSocket from 'ws'
 
 import {Extension} from './main'
-import {SyncTeXRecord} from './locator'
+import { Server } from "./server";
+import { Manager } from "./manager";
+import { Logger } from "./logger";
 
 interface Position {}
 
@@ -17,25 +19,35 @@ interface Client {
 }
 
 export class Viewer {
-    extension: Extension
-    clients: {[key: string]: Client | undefined} = {}
+    readonly logger: Logger;
+    readonly manager: Manager;
+    readonly server: Server;
+    clients: { [key: string]: Client | undefined } = {}
     positions = {}
 
-    constructor(extension: Extension) {
-        this.extension = extension
+    constructor(logger: Logger, manager: Manager, server: Server) {
+        this.logger = logger;
+        this.manager = manager;
+        this.server = server;
+
+        // This gets rid of the dependency server has on viewer
+        this.server.wsServer.on("connection", (ws) => {
+            ws.on("message", (msg) => this.handler(ws, msg))
+            ws.on("close", () => this.handler(ws, '{"type": "close"}'))
+        })
     }
 
     refreshExistingViewer(sourceFile: string, type?: string) : boolean {
-        const pdfFile = this.extension.manager.tex2pdf(sourceFile)
+        const pdfFile = this.manager.tex2pdf(sourceFile)
         const client = this.clients[pdfFile]
         if (client !== undefined &&
             (type === undefined || client.type === type) &&
             client.ws !== undefined) {
-            this.extension.logger.addLogMessage(`Refresh PDF viewer for ${pdfFile}`)
+            this.logger.addLogMessage(`Refresh PDF viewer for ${pdfFile}`)
             client.ws.send(JSON.stringify({type: "refresh"}))
             return true
         }
-        this.extension.logger.addLogMessage(`No PDF viewer connected for ${pdfFile}`)
+        this.logger.addLogMessage(`No PDF viewer connected for ${pdfFile}`)
         return false
     }
 
@@ -43,17 +55,17 @@ export class Viewer {
         if (this.refreshExistingViewer(sourceFile, type)) {
             return
         }
-        const pdfFile = this.extension.manager.tex2pdf(sourceFile)
+        const pdfFile = this.manager.tex2pdf(sourceFile)
         if (!fs.existsSync(pdfFile)) {
-            this.extension.logger.addLogMessage(`Cannot find PDF file ${pdfFile}`)
+            this.logger.addLogMessage(`Cannot find PDF file ${pdfFile}`)
             return
         }
-        if (this.extension.server.address === undefined) {
-            this.extension.logger.addLogMessage(`Cannot establish server connection.`)
+        if (this.server.address === undefined) {
+            this.logger.addLogMessage(`Cannot establish server connection.`)
             return
         }
-        const url = `http://${this.extension.server.address}/viewer.html?file=\\pdf:${encodeURIComponent(pdfFile)}`
-        this.extension.logger.addLogMessage(`Serving PDF file at ${url}`)
+        const url = `http://${this.server.address}/viewer.html?file=\\pdf:${encodeURIComponent(pdfFile)}`
+        this.logger.addLogMessage(`Serving PDF file at ${url}`)
         return url
     }
 
@@ -62,15 +74,15 @@ export class Viewer {
         if (!url) {
             return
         }
-        const pdfFile = this.extension.manager.tex2pdf(sourceFile)
+        const pdfFile = this.manager.tex2pdf(sourceFile)
         const client = this.clients[pdfFile]
         if (client !== undefined && client.ws !== undefined) {
             client.ws.close()
         }
         this.clients[pdfFile] = {type: 'viewer'}
         opn(url)
-        this.extension.logger.addLogMessage(`Open PDF viewer for ${pdfFile}`)
-        this.extension.logger.displayStatus('repo', 'statusBar.foreground', `Open PDF viewer for ${path.basename(pdfFile)}.`)
+        this.logger.addLogMessage(`Open PDF viewer for ${pdfFile}`)
+        this.logger.displayStatus('repo', 'statusBar.foreground', `Open PDF viewer for ${path.basename(pdfFile)}.`)
     }
 
     openTab(sourceFile: string) {
@@ -78,7 +90,7 @@ export class Viewer {
         if (!url) {
             return
         }
-        const pdfFile = this.extension.manager.tex2pdf(sourceFile)
+        const pdfFile = this.manager.tex2pdf(sourceFile)
         const client = this.clients[pdfFile]
         const uri = vscode.Uri.file(pdfFile).with({scheme: 'zed-workshop-pdf'})
         let column = vscode.ViewColumn.Two
@@ -90,8 +102,8 @@ export class Viewer {
         }
         this.clients[pdfFile] = {type: 'tab'}
         vscode.commands.executeCommand("vscode.previewHtml", uri, column, path.basename(pdfFile))
-        this.extension.logger.addLogMessage(`Open PDF tab for ${pdfFile}`)
-        this.extension.logger.displayStatus('repo', 'statusBar.foreground', `Open PDF tab for ${path.basename(pdfFile)}.`)
+        this.logger.addLogMessage(`Open PDF tab for ${pdfFile}`)
+        this.logger.displayStatus('repo', 'statusBar.foreground', `Open PDF tab for ${path.basename(pdfFile)}.`)
     }
 
     handler(ws: WebSocket, msg: string) {
@@ -142,23 +154,11 @@ export class Viewer {
                 }
                 break
             case 'click':
-                this.extension.locator.locate(data, decodeURIComponent(data.path))
+                //this.extension.locator.locate(data, decodeURIComponent(data.path))
                 break
             default:
-                this.extension.logger.addLogMessage(`Unknown websocket message: ${msg}`)
+                this.logger.addLogMessage(`Unknown websocket message: ${msg}`)
                 break
-        }
-    }
-
-    syncTeX(pdfFile: string, record: SyncTeXRecord | {[key: string]: string | number}) {
-        const client = this.clients[pdfFile]
-        if (client === undefined) {
-            this.extension.logger.addLogMessage(`PDF is not viewed: ${pdfFile}`)
-            return
-        }
-        if (client.ws !== undefined) {
-            client.ws.send(JSON.stringify({type: "synctex", data: record}))
-            this.extension.logger.addLogMessage(`Try to synctex ${pdfFile}`)
         }
     }
 }

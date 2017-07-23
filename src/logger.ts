@@ -1,15 +1,14 @@
 import * as vscode from 'vscode'
 
-import {Extension} from './main'
+import { Parser } from "./parser";
+import { Manager } from "./manager";
 
 export class Logger {
-    extension: Extension
     logPanel: vscode.OutputChannel
     status: vscode.StatusBarItem
     statusTimeout: NodeJS.Timer
 
-    constructor(extension: Extension) {
-        this.extension = extension
+    constructor() {
         this.logPanel = vscode.window.createOutputChannel('Zed Workshop')
         this.addLogMessage('Initializing Zed Workshop.')
         this.status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -10000)
@@ -49,23 +48,23 @@ export class Logger {
         }
     }
 
-    showLog() {
-        const uri = vscode.Uri.file(this.extension.manager.rootFile).with({scheme: 'zed-workshop-log'})
+    showLog(manager: Manager) {
+        const uri = vscode.Uri.file(manager.rootFile).with({scheme: 'zed-workshop-log'})
         let column = vscode.ViewColumn.Two
         if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn === vscode.ViewColumn.Two) {
             column = vscode.ViewColumn.Three
         }
         vscode.commands.executeCommand("vscode.previewHtml", uri, column, 'Raw Zed Log')
-        this.extension.logger.addLogMessage(`Open Log tab`)
+        this.addLogMessage(`Open Log tab`)
     }
 }
 
 export class LogProvider implements vscode.TextDocumentContentProvider {
-    extension: Extension
+    parser: Parser;
     change = new vscode.EventEmitter<vscode.Uri>()
 
-    constructor(extension: Extension) {
-        this.extension = extension
+    constructor(parser: Parser) {
+        this.parser = parser;
     }
 
     public update(uri: vscode.Uri) {
@@ -77,11 +76,11 @@ export class LogProvider implements vscode.TextDocumentContentProvider {
     }
 
     public provideTextDocumentContent(_uri: vscode.Uri) : string {
-        const dom = this.extension.parser.buildLogRaw.split('\n').map(log => `<span>${log.replace(/&/g, "&amp;")
-                                                                                         .replace(/</g, "&lt;")
-                                                                                         .replace(/>/g, "&gt;")
-                                                                                         .replace(/"/g, "&quot;")
-                                                                                         .replace(/'/g, "&#039;")}</span><br>`)
+        const dom = this.parser.buildLogRaw.split('\n').map(log => `<span>${log.replace(/&/g, "&amp;")
+                                                                                .replace(/</g, "&lt;")
+                                                                                .replace(/>/g, "&gt;")
+                                                                                .replace(/"/g, "&quot;")
+                                                                                .replace(/'/g, "&#039;")}</span><br>`)
         return `
             <!DOCTYPE html style="position:absolute; left: 0; top: 0; width: 100%; height: 100%;"><html><head></head>
             <body style="position:absolute; left: 0; top: 0; width: 100%; height: 100%; white-space: pre;">${dom.join('')}</body></html>

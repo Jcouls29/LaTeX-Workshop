@@ -4,18 +4,20 @@ import * as fs from 'fs'
 import * as opn from 'opn'
 
 import {Logger, LogProvider} from './logger'
-import * as comm from './commands/Commands'
+import * as comm from './Commands'
 import {Manager} from './manager'
 import {Builder} from './builder'
 import {CodeActions} from './codeactions'
 import {Viewer, PDFProvider} from './viewer'
 import {Server} from './server'
-import {Locator} from './locator'
 import {Parser} from './parser'
 import {Completer} from './completer'
 import {Linter} from './linter'
 import {Cleaner} from './cleaner'
 import {SectionNodeProvider} from './providers/outline'
+import { Command } from "./providers/command";
+
+export const EXTENSION_ROOT: string = path.resolve(`${__dirname}/../../`);
 
 function lintRootFileIfEnabled(extension: Extension) {
     const configuration = vscode.workspace.getConfiguration('zed-workshop')
@@ -198,13 +200,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export class Extension {
     packageInfo
-    extensionRoot: string
     logger: Logger
     manager: Manager
     builder: Builder
     viewer: Viewer
     server: Server
-    locator: Locator
     parser: Parser
     completer: Completer
     linter: Linter
@@ -214,20 +214,21 @@ export class Extension {
     logProvider: LogProvider
 
     constructor() {
-        this.extensionRoot = path.resolve(`${__dirname}/../../`)
-        this.logger = new Logger(this)
-        this.manager = new Manager(this)
-        this.builder = new Builder(this)
-        this.viewer = new Viewer(this)
-        this.server = new Server(this)
-        this.locator = new Locator(this)
-        this.parser = new Parser(this)
-        this.completer = new Completer(this)
-        this.linter = new Linter(this)
-        this.cleaner = new Cleaner(this)
-        this.codeActions = new CodeActions(this)
+        let command = new Command()
 
-        this.logProvider = new LogProvider(this)
+        this.logger = new Logger()
+        this.manager = new Manager(this.logger, command)
+        this.completer = new Completer(this.logger, this.manager, command)
+        this.parser = new Parser(this.logger, this.manager)
+        this.cleaner = new Cleaner(this.logger, this.manager)
+        this.linter = new Linter(this.logger, this.parser, this.manager)
+        this.server = new Server(this.logger)
+        this.viewer = new Viewer(this.logger, this.manager, this.server)
+        
+        this.codeActions = new CodeActions()
+        this.logProvider = new LogProvider(this.parser)
+        this.builder = new Builder(this.logger, this.parser, this.viewer, this.manager, this.cleaner, this.logProvider)
+        
         this.logger.addLogMessage(`Zed Workshop initialized.`)
     }
 }

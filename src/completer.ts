@@ -1,43 +1,47 @@
 import * as vscode from 'vscode'
 import * as fs from 'fs'
 
-import {Extension} from './main'
-import {Citation} from './providers/citation'
+import {EXTENSION_ROOT} from './main'
 import {Command} from './providers/command'
 import {Environment} from './providers/environment'
-import {Reference} from './providers/reference'
+import { Logger } from "./logger";
+import { Manager } from "./manager";
+import { IProvider } from "./providers/provider";
 
 export class Completer implements vscode.CompletionItemProvider {
-    extension: Extension
-    citation: Citation
+    manager: Manager;
+    readonly logger: Logger;
     command: Command
     environment: Environment
-    reference: Reference
 
-    constructor(extension: Extension) {
-        this.extension = extension
-        this.citation = new Citation(extension)
-        this.command = new Command(extension)
-        this.environment = new Environment(extension)
-        this.reference = new Reference(extension)
-        fs.readFile(`${this.extension.extensionRoot}/data/environments.json`, (err1, defaultEnvs) => {
+    constructor(logger: Logger, manager: Manager, command: Command) {
+        if (logger === undefined) throw new ReferenceError('logger not defined.');
+        if (manager === undefined) throw new ReferenceError('manager not defined.');
+        if (command == undefined) throw new ReferenceError('command not defined.');
+
+        this.logger = logger;
+        this.manager = manager;
+        
+        this.command = command
+        this.environment = new Environment()
+        fs.readFile(`${EXTENSION_ROOT}/data/environments.json`, (err1, defaultEnvs) => {
             if (err1) {
-                this.extension.logger.addLogMessage(`Error reading default environments: ${err1.message}`)
+                this.logger.addLogMessage(`Error reading default environments: ${err1.message}`)
                 return
             }
-            this.extension.logger.addLogMessage(`Default environments loaded`)
-            fs.readFile(`${this.extension.extensionRoot}/data/commands.json`, (err2, defaultCommands) => {
+            this.logger.addLogMessage(`Default environments loaded`)
+            fs.readFile(`${EXTENSION_ROOT}/data/commands.json`, (err2, defaultCommands) => {
                 if (err2) {
-                    this.extension.logger.addLogMessage(`Error reading default commands: ${err2.message}`)
+                    this.logger.addLogMessage(`Error reading default commands: ${err2.message}`)
                     return
                 }
-                this.extension.logger.addLogMessage(`Default commands loaded`)
-                fs.readFile(`${this.extension.extensionRoot}/data/unimathsymbols.json`, (err3, defaultSymbols) => {
+                this.logger.addLogMessage(`Default commands loaded`)
+                fs.readFile(`${EXTENSION_ROOT}/data/unimathsymbols.json`, (err3, defaultSymbols) => {
                     if (err2) {
-                        this.extension.logger.addLogMessage(`Error reading default unimathsymbols: ${err3.message}`)
+                        this.logger.addLogMessage(`Error reading default unimathsymbols: ${err3.message}`)
                         return
                     }
-                    this.extension.logger.addLogMessage(`Default unimathsymbols loaded`)
+                    this.logger.addLogMessage(`Default unimathsymbols loaded`)
                     const env = JSON.parse(defaultEnvs.toString())
                     this.command.initialize(JSON.parse(defaultCommands.toString()), JSON.parse(defaultSymbols.toString()), env)
                     this.environment.initialize(env)
@@ -56,7 +60,7 @@ export class Completer implements vscode.CompletionItemProvider {
                         const configuration = vscode.workspace.getConfiguration('zed-workshop')
                         if (configuration.get('intellisense.citation.type') as string === 'browser') {
                             resolve([])
-                            this.extension.completer.citation.browser()
+                            //this.extension.completer.citation.browser()
                             return
                         }
                     }
@@ -70,16 +74,9 @@ export class Completer implements vscode.CompletionItemProvider {
 
     completion(type: string, line: string) : vscode.CompletionItem[] {
         let reg
-        let provider
+        let provider : IProvider
+        
         switch (type) {
-            case 'citation':
-                reg = /(?:\\[a-zA-Z]*cite[a-zA-Z]*(?:\[[^\[\]]*\])?){([^}]*)$/
-                provider = this.citation
-                break
-            case 'reference':
-                reg = /(?:\\[a-zA-Z]*ref[a-zA-Z]*(?:\[[^\[\]]*\])?){([^}]*)$/
-                provider = this.reference
-                break
             case 'environment':
                 reg = /(?:\\(?:begin|end)(?:\[[^\[\]]*\])?){([^}]*)$/
                 provider = this.environment
@@ -90,13 +87,13 @@ export class Completer implements vscode.CompletionItemProvider {
                 break
             default:
                 // This shouldn't be possible, so mark as error case in log.
-                this.extension.logger.addLogMessage(`Error - trying to complete unknown type ${type}`)
+                this.logger.addLogMessage(`Error - trying to complete unknown type ${type}`)
                 return []
         }
         const result = line.match(reg)
         let suggestions: vscode.CompletionItem[] = []
         if (result) {
-            suggestions = provider.provide()
+            suggestions = provider.provide(this.manager)
         }
         return suggestions
     }

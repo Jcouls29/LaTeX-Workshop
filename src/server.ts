@@ -3,34 +3,32 @@ import * as ws from 'ws'
 import * as fs from 'fs'
 import * as path from 'path'
 
-import {Extension} from './main'
+import { Logger } from "./logger";
+import {EXTENSION_ROOT} from "./main"
 
 export class Server {
-    extension: Extension
-    httpServer: http.Server
-    wsServer: ws.Server
+    readonly logger: Logger;
+    readonly httpServer: http.Server
+    public wsServer: ws.Server
     address: string
     root: string
 
-    constructor(extension: Extension) {
-        this.extension = extension
+    constructor(logger: Logger) {
+        this.logger = logger;
+
         this.httpServer = http.createServer((request, response) => this.handler(request, response))
         this.httpServer.listen(0, "localhost", undefined, (err: Error) => {
             if (err) {
-                this.extension.logger.addLogMessage(`Error creating LaTeX Workshop http server: ${err}.`)
+                this.logger.addLogMessage(`Error creating LaTeX Workshop http server: ${err}.`)
             } else {
                 const {address, port} = this.httpServer.address()
                 this.address = `${address}:${port}`
-                this.root = path.resolve(`${this.extension.extensionRoot}/viewer`)
-                this.extension.logger.addLogMessage(`Server created on ${this.address}`)
+                this.root = path.resolve(`${EXTENSION_ROOT}/viewer`)
+                this.logger.addLogMessage(`Server created on ${this.address}`)
             }
         })
         this.wsServer = ws.createServer({server: this.httpServer})
-        this.wsServer.on("connection", (ws) => {
-            ws.on("message", (msg) => this.extension.viewer.handler(ws, msg))
-            ws.on("close", () => this.extension.viewer.handler(ws, '{"type": "close"}'))
-        })
-        this.extension.logger.addLogMessage(`Creating Zed Workshop http and websocket server.`)
+        this.logger.addLogMessage(`Creating Zed Workshop http and websocket server.`)
     }
 
     handler(request: http.IncomingMessage, response: http.ServerResponse) {
@@ -43,11 +41,11 @@ export class Server {
                 const pdfSize = fs.statSync(fileName).size
                 response.writeHead(200, {'Content-Type': 'application/pdf', 'Content-Length': pdfSize})
                 fs.createReadStream(fileName).pipe(response)
-                this.extension.logger.addLogMessage(`Preview PDF file: ${fileName}`)
+                this.logger.addLogMessage(`Preview PDF file: ${fileName}`)
             } catch (e) {
                 response.writeHead(404)
                 response.end()
-                this.extension.logger.addLogMessage(`Error reading PDF file: ${fileName}`)
+                this.logger.addLogMessage(`Error reading PDF file: ${fileName}`)
             }
             return
         }

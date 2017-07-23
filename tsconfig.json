@@ -11,7 +11,7 @@
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": true,
+        "noUnusedParameters": false,
         "outDir": "out",
         "rootDir": ".",
         "sourceMap": true,
