@@ -43,7 +43,7 @@ export class SectionNodeProvider implements vscode.TreeDataProvider<Section> {
         const content = fs.readFileSync(filePath, 'utf-8')
 
         // Establish patterns for the searches
-        const basicPattern = /^[ \t]*\[([\w\d_,\s]+)\][ \t]*$/gm
+        const basicPattern = /^[ \t]*\[([\w\d_,\s]+)\]/gm
 
         while(true){
             const result = basicPattern.exec(content);
@@ -55,20 +55,75 @@ export class SectionNodeProvider implements vscode.TreeDataProvider<Section> {
 
             // comma-separated array for basic definitions in Z
             for(let s of splits){
-                const newSection = new Section(s, vscode.TreeItemCollapsibleState.Collapsed, lineNumber, filePath);
+                const newSection = new Section(s.trim(), vscode.TreeItemCollapsibleState.Collapsed, lineNumber, filePath);
                 sections.push(newSection);
             }
         }
 
         // Get Schema Definitions
-        const schemaPattern = /^[ \t]*\\begin\{schema\}\{([\w\d_]+)\}[ \t]*$/gmi
+        const schemaPattern = /^[ \t]*\\begin\{schema\}\{([\w\d_ ,\[\]]+)\}/gmi
         while(true){
             const result = schemaPattern.exec(content);
             if (!result) break;
             const lineNumber = this.findLineNumber(content, result.index);
             const label = result[1];
             const newSection = new Section(label, vscode.TreeItemCollapsibleState.Collapsed, lineNumber, filePath);
-                sections.push(newSection);
+            sections.push(newSection);
+        }
+
+        const axiomPattern = /^[ \t]*\\begin\{axdef\}([\s\S]+?)(\\end\{axdef\})/gmi
+        while(true){
+            const result = axiomPattern.exec(content);
+            if (!result) break;
+
+            const innerBlock = result[1];
+            const innerPattern = /^[ \t]*([\w\d \t_,]+):/gmi
+            while(true){
+                const innerResult = innerPattern.exec(innerBlock);
+                if (!innerResult) break;
+
+                const lineNumber = this.findLineNumber(content, result.index + innerResult.index) + 1
+                const labels = innerResult[1];
+                const splits = labels.split(',');
+                for(let s of splits){
+                    const newSection = new Section(s.trim(), vscode.TreeItemCollapsibleState.Collapsed, lineNumber, filePath)
+                    sections.push(newSection);
+                }
+                
+            }
+        }
+
+        const genPattern = /^[ \t]*\\begin\{gendef\}\s*?(\[[\w\d ,_]+\])/gmi
+        while(true){
+            const result = genPattern.exec(content);
+            if (!result) break;
+
+            const lineNumber = this.findLineNumber(content, result.index);
+            const label = result[1];
+            const newSection = new Section(label.trim(), vscode.TreeItemCollapsibleState.Collapsed, lineNumber, filePath)
+            sections.push(newSection);
+        }
+
+        const listPattern = /^[ \t]*([\w\d_]+)\s*?::=/gm
+        while(true){
+            const result = listPattern.exec(content);
+            if (!result) break;
+
+            const lineNumber = this.findLineNumber(content, result.index);
+            const label = result[1];
+            const newSection = new Section(label.trim(), vscode.TreeItemCollapsibleState.Collapsed, lineNumber, filePath)
+            sections.push(newSection);
+        }
+
+        const inlineSchemaPattern = /^[ \t]*([\w\d_]+)\s*? ==/gm
+        while(true){
+            const result = inlineSchemaPattern.exec(content);
+            if (!result) break;
+
+            const lineNumber = this.findLineNumber(content, result.index);
+            const label = result[1];
+            const newSection = new Section(label.trim(), vscode.TreeItemCollapsibleState.Collapsed, lineNumber, filePath)
+            sections.push(newSection);
         }
 
         return sections;
