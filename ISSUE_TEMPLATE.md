@@ -20,7 +20,7 @@
 
 <!-- Please describe what happens instead. -->
 
-### LaTeX Workshop log messages
+### Zed Workshop log messages
 
 <details>
 <summary>Log messages</summary>

@@ -6,10 +6,10 @@
   "version": "1.0.0",
   "publisher": "SparcPoint",
   "license": "MIT",
-  "homepage": "https://github.com/James-Yu/LaTeX-Workshop",
+  "homepage": "https://github.com/Jcouls29/Zed-Workshop",
   "repository": {
     "type": "git",
-    "url": "https://github.com/James-Yu/LaTeX-Workshop.git"
+    "url": "https://github.com/Jcouls29/Zed-Workshop.git"
   },
   "engines": {
     "vscode": "^1.13.0"
@@ -19,14 +19,10 @@
     "Snippets"
   ],
   "keywords": [
-    "latex",
-    "tex",
     "compile",
     "preview",
-    "hint",
     "z",
     "z-notation",
-    "specification",
     "z-specification"
   ],
   "activationEvents": [
@@ -138,42 +134,6 @@
           "default": false,
           "description": "Delete Zed auxillary files after building project.\nThis property defines whether LaTeX Workshop will clean up all unnecessary files after building the project."
         },
-        "zed-workshop.zed.clean.fileTypes": {
-          "type": "array",
-          "default": [
-            "*.aux",
-            "*.bbl",
-            "*.blg",
-            "*.idx",
-            "*.ind",
-            "*.lof",
-            "*.lot",
-            "*.out",
-            "*.toc",
-            "*.acn",
-            "*.acr",
-            "*.alg",
-            "*.glg",
-            "*.glo",
-            "*.gls",
-            "*.ist",
-            "*.fls",
-            "*.log",
-            "*.fdb_latexmk",
-            "*.gz"
-          ],
-          "description": "Files to clean.\nThis property must be an array of strings. File globs such as *.removeme, something?.aux can be used."
-        },
-        "zed-workshop.view.outline.sections": {
-          "type": "array",
-          "default": [
-            "chapter",
-            "section",
-            "subsection",
-            "subsubsection"
-          ],
-          "description": "The section names of LaTeX outline hierarchy.\nThis property is an array of case-sensitive strings in the order of document structure hierarchy. For multiple tags in the same level, seperate the tags with `|` as delimiters, e.g., `section|alternative`."
-        },
         "zed-workshop.view.pdf.zoom": {
           "type": "string",
           "default": "auto",
@@ -183,11 +143,6 @@
           "type": "boolean",
           "default": false,
           "description": "Define if the hand tool is enabled by default in the PDF viewer."
-        },
-        "zed-workshop.synctex.path": {
-          "type": "string",
-          "default": "synctex",
-          "description": "Define the location of SyncTeX executive file.\nAdditional arguments, e.g., synctex modes and position of click, will be appended to this command."
         },
         "zed-workshop.chktex.enabled": {
           "type": "boolean",
@@ -225,25 +180,6 @@
           "type": "number",
           "default": 300,
           "description": "Defines the time interval in milliseconds between invoking LaTeX linter on the active file."
-        },
-        "zed-workshop.intellisense.citation.type": {
-          "type": "string",
-          "enum": [
-            "inline",
-            "browser"
-          ],
-          "default": "inline",
-          "description": "Defines which type of hint to show when intellisense provides citation suggestions."
-        },
-        "zed-workshop.intellisense.citation.label": {
-          "type": "string",
-          "enum": [
-            "bibtex key",
-            "title",
-            "authors"
-          ],
-          "default": "bibtex key",
-          "description": "Defines what to show as suggestion labels when intellisense provides citation suggestions."
         },
         "zed-workshop.debug.showLog": {
           "type": "boolean",
