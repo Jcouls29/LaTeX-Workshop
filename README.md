@@ -1,5 +1,13 @@
 # Visual Studio Code Z-Specification Workshop Extension
 
+[![version](https://vsmarketplacebadge.apphb.com/version/SparcPoint.zed-workshop.svg)](https://marketplace.visualstudio.com/items?itemName=SparcPoint.zed-workshop)
+[![installs](https://vsmarketplacebadge.apphb.com/installs/SparcPoint.zed-workshop.svg)](https://marketplace.visualstudio.com/items?itemName=SparcPoint.zed-workshop)
+[![rating](https://vsmarketplacebadge.apphb.com/rating/SparcPoint.zed-workshop.svg)](https://marketplace.visualstudio.com/items?itemName=SparcPoint.zed-workshop)
+[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/Jcouls29/Zed-Workshop/master/LICENSE.txt)
+
+[![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/Jcouls29/Zed-Workshop.svg)](https://github.com/Jcouls29/Zed-Workshop/issues)
+[![Percentage of issues still open](https://isitmaintained.com/badge/open/Jcouls29/Zed-Workshop.svg)](https://github.com/Jcousl29/Zed-Workshop/issues)
+
 Z-Specification Workshop is an extension for [Visual Studio Code](https://code.visualstudio.com/), aiming to provide all-in-one features and utilities for Z-Notation typesetting with Visual Studio Code. This extension is based on the elegant LaTeX Workshop by James Yu [LaTeX-Workshop (GitHub)](https://github.com/James-Yu/LaTeX-Workshop), [LaTeX-Workshop (VS Code)](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop). His code deserves the most credit!
 
 ## Features
